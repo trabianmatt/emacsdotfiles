@@ -1,0 +1,6 @@
+## Packages
+
+* better-defaults (of particular note are "uniquify" and "saveplace" -- what are those?)
+* clojure-mode
+* clojure-test-mode
+* cider
