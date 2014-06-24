@@ -1,0 +1,36 @@
+* Packages
+
+** TODO better-defaults (of particular note are "uniquify" and "saveplace" -- what are those?)
+** TODO clojure-mode
+** TODO clojure-test-mode
+** TODO cider
+** TODO yas
+** TODO clj-refactor
+** TODO tramp (for connecting to remote machines)
+** TODO shell-mode
+** TODO org-mode
+** TODO projectile
+
+*** TODO Add keystrokes to Anki
+
+** TODO magit
+
+[[https://github.com/magit/magit][repo]]
+[[http://www.masteringemacs.org/articles/2013/12/06/introduction-magit-emacs-mode-git/][Introduction to magit on Mastering Emacs]]
+[[info:magit#Top]]
+
+*** TODO Add keystrokes to Anki
+
+* Keystrokes
+
+** Cider: 
+
+[[https://github.com/clojure-emacs/cider#keyboard-shortcuts][Keyboard Shortcuts]]
+
+** Paredit
+
+* Resources
+
+** Mastering Emacs (http://www.masteringemacs.org/reading-guide/)
+** Effective Editing 1: Movement (http://www.masteringemacs.org/articles/2011/01/14/effective-editing-movement/)
+** Mastering Key Bindings (http://www.masteringemacs.org/articles/2011/02/08/mastering-key-bindings-emacs/)
