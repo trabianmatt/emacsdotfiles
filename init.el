@@ -21,47 +21,12 @@
 (require 'ob-tangle)
 (org-babel-load-file (expand-file-name "~/.emacs.d/mattdean.org"))
 
-
-;; (defvar my-packages '(better-defaults
-;; 		      clojure-mode
-;; 		      clojure-test-mode
-;;                       paredit
-;;                       rainbow-delimiters
-;; 		      cider
-;;                       clj-refactor))
-
-;; (when (not package-archive-contents)
-;;   (package-refresh-contents))
-
-;; (dolist (p my-packages)
-;;   (when (not (package-installed-p p))
-;;     (package-install p)))
-
 ;; (defun set-exec-path-from-shell-PATH ()
 ;;   (let ((path-from-shell (shell-command-to-string "$SHELL -i -c 'echo $PATH'")))
 ;;     (setenv "PATH" path-from-shell)
 ;;     (setq exec-path (split-string path-from-shell path-separator))))
 
-;; (add-hook 'cider-repl-mode-hook 'paredit-mode)
-;; (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
-
-;; (add-hook 'cider-mode-hook 'paredit-mode)
-;; (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-
-;; (add-hook 'clojure-mode-hook 'paredit-mode)
-
-;; (setq inhibit-startup-message t
-;;   inhibit-startup-echo-area-message t)
-
 ;; (setq ido-use-filename-at-point nil)
-
-;; (load-theme 'solarized-dark t)
-
-;; (setq next-line-add-newlines nil)
-
-;; (setq ns-right-option-modifier 'super)
-
-;; (define-key global-map (kbd "RET") 'newline-and-indent)
 
 ;; (defun ido-goto-symbol (&optional symbol-list)
 ;;       "Refresh imenu and jump to a place in the buffer using Ido."
@@ -115,45 +80,4 @@
 
 ;; ; (yas/global-mode t)
 
-;; (require 'clj-refactor)
 
-;; (setq cljr-sort-comparator 'cljr--semantic-comparator)
-
-;; (add-hook 'clojure-mode-hook (lambda ()
-;;                                (clj-refactor-mode 1)
-;;                                ;; insert keybinding here
-;;                                (cljr-add-keybindings-with-prefix "C-c C-m")))
-
-;; (setq coffee-tab-width 2)
-;; (setq coffee-args-compile '("-c" "--bare"))
-
-;; (projectile-global-mode)
-
-;; (setq projectile-enable-caching nil)
-
-;; (require 'org)
-;; (define-key global-map "\C-cl" 'org-store-link)
-;; (define-key global-map "\C-cc" 'org-capture)
-;; (define-key global-map "\C-ca" 'org-agenda)
-;; (define-key global-map "\C-cb" 'org-iswitchb)
-;; (setq org-log-done t)
-
-;; (setq org-hide-leading-stars t)
-
-;; ;; automatically clean up bad whitespace
-;; (setq whitespace-action '(auto-cleanup))
-
-;; ;; only show bad whitespace
-;; (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
-
-;; (add-hook 'coffee-mode-hook 'whitespace-mode)
-
-;; ;; This is particularly important when watching files via grunt --
-;; ;; don't want autosave file to trigger the watchers.
-;; (setq backup-directory-alist
-;;           `((".*" . ,temporary-file-directory)))
-
-;; (setq auto-save-file-name-transforms
-;;           `((".*" ,temporary-file-directory t)))
-
-;; (setq create-lockfiles nil)

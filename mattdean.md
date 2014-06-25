@@ -1,28 +1,39 @@
+- [Document this a bit better &#x2013; was mostly copied/pasted from existing init.el](#document-this-a-bit-better-&#x2013;-was-mostly-copied/pasted-from-existing-init.el)
 - [Configuration](#configuration)
   - [About this configuration](#about-this-configuration)
   - [Emacs initialization](#emacs-initialization)
     - [Helper functions](#helper-functions)
   - [General configuration](#general-configuration)
-    - [Backups](#backups)
+    - [Themes](#themes)
+    - [Misc. packages](#misc.-packages)
+      - [better-defaults](#better-defaults)
+    - [Keyboard customizations](#keyboard-customizations)
+    - [Backups and intermediate files](#backups-and-intermediate-files)
   - [Mode/package-specific configuration](#mode/package-specific-configuration)
     - [org-mode](#org-mode)
       - [Learn org-mode (I suspect this will be a long-lived TODO)](#learn-org-mode-(i-suspect-this-will-be-a-long-lived-todo))
     - [magit](#magit)
-    - [Install packages](#install-packages)
-      - [better-defaults](#better-defaults)
-      - [Clojure modes and tools](#clojure-modes-and-tools)
-      - [General lisp editing](#general-lisp-editing)
+    - [paredit and other lisp helpers](#paredit-and-other-lisp-helpers)
+      - [Add paredit keystrokes to Anki](#add-paredit-keystrokes-to-anki)
+    - [Clojure](#clojure)
+    - [Coffeescript](#coffeescript)
+    - [Projectile](#projectile)
+    - [Whitespace](#whitespace)
 
+Note: Due to some unknown (to me) issue, org-mode needs to be reloaded
+via `M-x org-reload` after starting Emacs
 
-# Configuration<a id="sec-1"></a>
+# TODO Document this a bit better &#x2013; was mostly copied/pasted from existing init.el<a id="sec-1"></a>
 
-## About this configuration<a id="sec-1-1"></a>
+# Configuration<a id="sec-2"></a>
+
+## About this configuration<a id="sec-2-1"></a>
 
 This configuration is inspired by the [Sacha Chua's literate config
 file](http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1) and is partially an exploration into the idea of literate
 programming, particularly via org-mode.
 
-## Emacs initialization<a id="sec-1-2"></a>
+## Emacs initialization<a id="sec-2-2"></a>
 
 Load common package archives.
 
@@ -35,7 +46,7 @@ Load common package archives.
   (package-refresh-contents))
 ```
 
-### Helper functions<a id="sec-1-2-1"></a>
+### Helper functions<a id="sec-2-2-1"></a>
 
 The following function will install a package if needed. It is taken from [Sacha
 Chua's config](http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1-3-5).
@@ -46,71 +57,156 @@ Chua's config](http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1
 If REPOSITORY is specified, use that."
   (unless (package-installed-p package)
     (let ((package-archives (if repository
-				(list (assoc repository package-archives))
-			      package-archives)))
+                                (list (assoc repository package-archives))
+                              package-archives)))
       (package-install package))))
 ```
 
-## General configuration<a id="sec-1-3"></a>
+## General configuration<a id="sec-2-3"></a>
 
-### Backups<a id="sec-1-3-1"></a>
-
-The following will store backups in `~/.emacs.d/backups` instead of in the same
-directory as the original.
+We don't need no stinkin' startup message
 
 ```lisp
-(setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
-(setq delete-old-versions -1)
-(setq version-control t)
-(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list" t)))
+(setq inhibit-startup-message t
+      inhibit-startup-echo-area-message t)
 ```
 
-## Mode/package-specific configuration<a id="sec-1-4"></a>
-
-### org-mode<a id="sec-1-4-1"></a>
-
-#### TODO Learn org-mode (I suspect this will be a long-lived TODO)<a id="sec-1-4-1-1"></a>
+### Themes<a id="sec-2-3-1"></a>
 
 ```lisp
-(add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
-(add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
+(my/package-install 'solarized-theme)
 
-(require 'ox-gfm)                       ; Support export to GitHub
-					; Flavored Markdown
+(load-theme 'solarized-dark t)
 ```
 
-### magit<a id="sec-1-4-2"></a>
+### Misc. packages<a id="sec-2-3-2"></a>
 
-```lisp
-(my/package-install 'magit)
-```
-
-### Install packages<a id="sec-1-4-3"></a>
-
-```lisp
-(defvar my-packages '())
-```
-
-#### better-defaults<a id="sec-1-4-3-1"></a>
+#### better-defaults<a id="sec-2-3-2-1"></a>
 
 > &#x2026; this package focuses a few changes that have near-universal appeal, lovingly hand-selected by inhabitants of the #emacs channel on Freenode.
 
 [GitHub Repo](https://github.com/technomancy/better-defaults)
 
 ```lisp
-(add-to-list 'my-packages 'better-defaults)
+(my/package-install 'better-defaults)
 ```
 
-#### Clojure modes and tools<a id="sec-1-4-3-2"></a>
+### Keyboard customizations<a id="sec-2-3-3"></a>
 
-1.  TODO Add clojure-mode, clojure-test-mode, and cider keystrokes to Anki
+```lisp
+;; Remap right alt/option key to 'super' (s-)
+(setq ns-right-option-modifier 'super)
+
+;; This is almost alway the intended behavior
+(define-key global-map (kbd "RET") 'newline-and-indent)
+```
+
+### Backups and intermediate files<a id="sec-2-3-4"></a>
+
+The following will store backups in `~/.emacs.d/backups` instead of in
+the same directory as the original. This is particularly important
+when using file watchers (such as grunt) that will be triggered
+unnecessarily when these files are created or updated.
+
+```lisp
+(setq backup-directory-alist '((".*" . "~/.emacs.d/backups")))
+
+(setq delete-old-versions -1)
+(setq version-control t)
+(setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list" t)))  
+
+(setq create-lockfiles nil)
+```
+
+## Mode/package-specific configuration<a id="sec-2-4"></a>
+
+### org-mode<a id="sec-2-4-1"></a>
+
+#### TODO Learn org-mode (I suspect this will be a long-lived TODO)<a id="sec-2-4-1-1"></a>
+
+```lisp
+(add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
+(add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
+
+(require 'ox-gfm)                       ; Support export to GitHub Flavored Markdown
+
+(require 'org)
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-cc" 'org-capture)
+(define-key global-map "\C-ca" 'org-agenda)
+(define-key global-map "\C-cb" 'org-iswitchb)
+(setq org-log-done t)
+
+(setq org-hide-leading-stars t)
+```
+
+### magit<a id="sec-2-4-2"></a>
+
+```lisp
+(my/package-install 'magit)
+```
+
+### paredit and other lisp helpers<a id="sec-2-4-3"></a>
+
+-   [Paredit Keystrokes](http://mumble.net/~campbell/emacs/paredit.html)
+
+#### TODO Add paredit keystrokes to Anki<a id="sec-2-4-3-1"></a>
+
+```lisp
+(my/package-install 'paredit)
+
+(my/package-install 'rainbow-delimiters)
+
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+```
+
+### Clojure<a id="sec-2-4-4"></a>
+
+1.  TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
 
     ```lisp
-    (add-to-list 'my-packages 'clojure-mode t)
-    (add-to-list 'my-packages 'clojure-test-mode t)
-    (add-to-list 'my-packages 'cider t)
-    (add-to-list 'my-packages 'clj-refactor t)
+    (my/package-install 'clojure-mode)
+    (my/package-install 'clojure-test-mode)
+    (my/package-install 'cider)
+    (my/package-install 'clj-refactor)
+    
+    (add-hook 'cider-repl-mode-hook 'paredit-mode)
+    (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+    
+    (add-hook 'clojure-mode-hook 'paredit-mode)
+    
+    (require 'clj-refactor)
+    
+    (setq cljr-sort-comparator 'cljr-semantic-comparator)
+    
+    (add-hook 'clojure-mode-hook (lambda ()
+                                   (clj-refactor-mode 1)
+                                   (cljr-add-keybindings-with-prefix "C-c C-m")))
     ```
 
-#### General lisp editing<a id="sec-1-4-3-3"></a>
+### Coffeescript<a id="sec-2-4-5"></a>
+
+```lisp
+(my/package-install 'coffee-mode)
+
+(setq coffee-tab-width 2)
+(setq coffee-args-compile '("-c" "--bare"))
+
+(add-hook 'coffee-mode-hook 'whitespace-mode)
+```
+
+### Projectile<a id="sec-2-4-6"></a>
+
+```lisp
+(my/package-install 'projectile)
+
+(projectile-global-mode)
+```
+
+### Whitespace<a id="sec-2-4-7"></a>
+
+```lisp
+(setq whitespace-action '(auto-cleanup))
+
+(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
+```

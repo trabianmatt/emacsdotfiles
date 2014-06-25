@@ -1,6 +1,11 @@
 #+TITLE: Matt Dean's Emacs configuration
 #+OPTIONS: toc:4 h:4
 
+Note: Due to some unknown (to me) issue, org-mode needs to be reloaded
+via =M-x org-reload= after starting Emacs
+
+* TODO Document this a bit better -- was mostly copied/pasted from existing init.el
+
 * Configuration
 ** About this configuration
    
@@ -39,17 +44,59 @@ Chua's config]].
 
 ** General configuration
 
-*** Backups
-
-The following will store backups in =~/.emacs.d/backups= instead of in the same
-directory as the original.
+We don't need no stinkin' startup message
 
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-  
+  (setq inhibit-startup-message t
+        inhibit-startup-echo-area-message t)
+#+END_SRC
+
+*** Themes
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'solarized-theme)
+
+  (load-theme 'solarized-dark t)
+#+END_SRC
+
+*** Misc. packages
+
+**** better-defaults
+
+#+BEGIN_QUOTE
+... this package focuses a few changes that have near-universal appeal, lovingly hand-selected by inhabitants of the #emacs channel on Freenode.
+#+END_QUOTE
+
+[[https://github.com/technomancy/better-defaults][GitHub Repo]]
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'better-defaults)
+#+END_SRC
+
+*** Keyboard customizations
+
+#+BEGIN_SRC emacs-lisp
+  ;; Remap right alt/option key to 'super' (s-)
+  (setq ns-right-option-modifier 'super)
+
+  ;; This is almost alway the intended behavior
+  (define-key global-map (kbd "RET") 'newline-and-indent)
+#+END_SRC
+*** Backups and intermediate files 
+
+The following will store backups in =~/.emacs.d/backups= instead of in
+the same directory as the original. This is particularly important
+when using file watchers (such as grunt) that will be triggered
+unnecessarily when these files are created or updated.
+
+#+BEGIN_SRC emacs-lisp
+  (setq backup-directory-alist '((".*" . "~/.emacs.d/backups")))
+
   (setq delete-old-versions -1)
   (setq version-control t)
   (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list" t)))  
+
+  (setq create-lockfiles nil)
 #+END_SRC
 
 ** Mode/package-specific configuration
@@ -62,8 +109,16 @@ directory as the original.
   (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
   (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
     
-  (require 'ox-gfm)                       ; Support export to GitHub
-                                          ; Flavored Markdown
+  (require 'ox-gfm)                       ; Support export to GitHub Flavored Markdown
+
+  (require 'org)
+  (define-key global-map "\C-cl" 'org-store-link)
+  (define-key global-map "\C-cc" 'org-capture)
+  (define-key global-map "\C-ca" 'org-agenda)
+  (define-key global-map "\C-cb" 'org-iswitchb)
+  (setq org-log-done t)
+
+  (setq org-hide-leading-stars t)
 #+END_SRC
 
 *** magit
@@ -72,33 +127,67 @@ directory as the original.
   (my/package-install 'magit)
 #+END_SRC
 
-*** Install packages
+*** paredit and other lisp helpers
+
+  * [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
+
+**** TODO Add paredit keystrokes to Anki
 
 #+BEGIN_SRC emacs-lisp
-  (defvar my-packages '())
+  (my/package-install 'paredit)
+
+  (my/package-install 'rainbow-delimiters)
+
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 #+END_SRC
 
-**** better-defaults
-
-#+BEGIN_QUOTE
-... this package focuses a few changes that have near-universal appeal, lovingly hand-selected by inhabitants of the #emacs channel on Freenode.
-#+END_QUOTE
-
-[[https://github.com/technomancy/better-defaults][GitHub Repo]]
+*** Clojure
+    
+***** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'my-packages 'better-defaults)
+  (my/package-install 'clojure-mode)
+  (my/package-install 'clojure-test-mode)
+  (my/package-install 'cider)
+  (my/package-install 'clj-refactor)
+
+  (add-hook 'cider-repl-mode-hook 'paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+
+  (add-hook 'clojure-mode-hook 'paredit-mode)
+
+  (require 'clj-refactor)
+
+  (setq cljr-sort-comparator 'cljr-semantic-comparator)
+
+  (add-hook 'clojure-mode-hook (lambda ()
+                                 (clj-refactor-mode 1)
+                                 (cljr-add-keybindings-with-prefix "C-c C-m")))
 #+END_SRC
 
-**** Clojure modes and tools
-
-***** TODO Add clojure-mode, clojure-test-mode, and cider keystrokes to Anki
+*** Coffeescript
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'my-packages 'clojure-mode t)
-  (add-to-list 'my-packages 'clojure-test-mode t)
-  (add-to-list 'my-packages 'cider t)
-  (add-to-list 'my-packages 'clj-refactor t)
+  (my/package-install 'coffee-mode)
+
+  (setq coffee-tab-width 2)
+  (setq coffee-args-compile '("-c" "--bare"))
+
+  (add-hook 'coffee-mode-hook 'whitespace-mode)
 #+END_SRC
 
-**** General lisp editing
+*** Projectile
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'projectile)
+
+  (projectile-global-mode)
+#+END_SRC
+
+*** Whitespace
+
+#+BEGIN_SRC emacs-lisp
+  (setq whitespace-action '(auto-cleanup))
+
+  (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
+#+END_SRC
