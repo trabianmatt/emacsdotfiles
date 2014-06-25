@@ -103,7 +103,24 @@ unnecessarily when these files are created or updated.
 
 *** org-mode
 
-**** TODO Learn org-mode (I suspect this will be a long-lived TODO)
+**** TODO Read [[http://orgmode.org/org.html][org-mode manual]] and add keystrokes to Anki (I suspect this will be a long-lived TODO)
+
+ * [ ] [[http://orgmode.org/org.html#Document-Structure][Document Structure]]
+ * [ ] [[http://orgmode.org/org.html#Tables][Tables]]
+ * [ ] [[http://orgmode.org/org.html#Hyperlinks][Hyperlinks]]
+ * [ ] [[http://orgmode.org/org.html#TODO-Items][TODO Items]]
+ * [ ] [[http://orgmode.org/org.html#Tags][Tags]]
+ * [ ] [[http://orgmode.org/org.html#Properties-and-Columns][Properties and Columns]]
+ * [ ] [[http://orgmode.org/org.html#Dates-and-Times][Dates and Times]]
+ * [ ] [[http://orgmode.org/org.html#Capture-_002d-Refile-_002d-Archive][Capture - Refile - Archive]]
+ * [ ] [[http://orgmode.org/org.html#Agenda-Views][Agenda Views]]
+ * [ ] [[http://orgmode.org/org.html#Markup][Markup for rich export]]
+ * [ ] [[http://orgmode.org/org.html#Exporting][Exporting]]
+ * [ ] [[http://orgmode.org/org.html#Publishing][Publishing]]
+ * [ ] [[http://orgmode.org/org.html#Working-With-Source-Code][Working with source code]]
+ * [ ] [[http://orgmode.org/org.html#Miscellaneous][Miscellaneous]]
+ * [ ] [[http://orgmode.org/org.html#Hacking][Appendix A: Hacking]]
+ * [ ] [[http://orgmode.org/org.html#MobileOrg][Appendix B: MobileOrg]]
 
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")

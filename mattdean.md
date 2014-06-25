@@ -11,7 +11,7 @@
     - [Backups and intermediate files](#backups-and-intermediate-files)
   - [Mode/package-specific configuration](#mode/package-specific-configuration)
     - [org-mode](#org-mode)
-      - [Learn org-mode (I suspect this will be a long-lived TODO)](#learn-org-mode-(i-suspect-this-will-be-a-long-lived-todo))
+      - [Read [org-mode manual](http://orgmode.org/org.html) and add keystrokes to Anki (I suspect this will be a long-lived TODO)](#read-[org-mode-manual](http://orgmode.org/org.html)-and-add-keystrokes-to-anki-(i-suspect-this-will-be-a-long-lived-todo))
     - [magit](#magit)
     - [paredit and other lisp helpers](#paredit-and-other-lisp-helpers)
       - [Add paredit keystrokes to Anki](#add-paredit-keystrokes-to-anki)
@@ -122,7 +122,24 @@ unnecessarily when these files are created or updated.
 
 ### org-mode<a id="sec-2-4-1"></a>
 
-#### TODO Learn org-mode (I suspect this will be a long-lived TODO)<a id="sec-2-4-1-1"></a>
+#### TODO Read [org-mode manual](http://orgmode.org/org.html) and add keystrokes to Anki (I suspect this will be a long-lived TODO)<a id="sec-2-4-1-1"></a>
+
+-   [ ] [Document Structure](http://orgmode.org/org.html#Document-Structure)
+-   [ ] [Tables](http://orgmode.org/org.html#Tables)
+-   [ ] [Hyperlinks](http://orgmode.org/org.html#Hyperlinks)
+-   [ ] [TODO Items](http://orgmode.org/org.html#TODO-Items)
+-   [ ] [Tags](http://orgmode.org/org.html#Tags)
+-   [ ] [Properties and Columns](http://orgmode.org/org.html#Properties-and-Columns)
+-   [ ] [Dates and Times](http://orgmode.org/org.html#Dates-and-Times)
+-   [ ] [Capture - Refile - Archive](http://orgmode.org/org.html#Capture-_002d-Refile-_002d-Archive)
+-   [ ] [Agenda Views](http://orgmode.org/org.html#Agenda-Views)
+-   [ ] [Markup for rich export](http://orgmode.org/org.html#Markup)
+-   [ ] [Exporting](http://orgmode.org/org.html#Exporting)
+-   [ ] [Publishing](http://orgmode.org/org.html#Publishing)
+-   [ ] [Working with source code](http://orgmode.org/org.html#Working-With-Source-Code)
+-   [ ] [Miscellaneous](http://orgmode.org/org.html#Miscellaneous)
+-   [ ] [Appendix A: Hacking](http://orgmode.org/org.html#Hacking)
+-   [ ] [Appendix B: MobileOrg](http://orgmode.org/org.html#MobileOrg)
 
 ```lisp
 (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
