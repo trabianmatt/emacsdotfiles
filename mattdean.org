@@ -1,0 +1,14 @@
+#+TITLE: Matt Dean's Emacs configuration
+#+OPTIONS: toc: 4 h: 4
+
+* Configuration
+** About this configuration
+   
+   This configuration is inspired by the [[http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1][Sacha Chua's literate config
+   file]] and is partially an exploration into the idea of literate
+   programming, particularly via org-mode.
+  
+#+begin_src emacs-lisp
+  ;; Set up the load path so we can override it
+  (package-initialize nil)
+#+end_src
