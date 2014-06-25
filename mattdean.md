@@ -4,9 +4,10 @@
     - [Helper functions](#helper-functions)
   - [General configuration](#general-configuration)
     - [Backups](#backups)
-  - [Mode-specific configuration](#mode-specific-configuration)
+  - [Mode/package-specific configuration](#mode/package-specific-configuration)
     - [org-mode](#org-mode)
       - [Learn org-mode (I suspect this will be a long-lived TODO)](#learn-org-mode-(i-suspect-this-will-be-a-long-lived-todo))
+    - [magit](#magit)
     - [Install packages](#install-packages)
       - [better-defaults](#better-defaults)
       - [Clojure modes and tools](#clojure-modes-and-tools)
@@ -65,7 +66,7 @@ directory as the original.
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list" t)))
 ```
 
-## Mode-specific configuration<a id="sec-1-4"></a>
+## Mode/package-specific configuration<a id="sec-1-4"></a>
 
 ### org-mode<a id="sec-1-4-1"></a>
 
@@ -75,16 +76,23 @@ directory as the original.
 (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
 (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
 
-(require 'ox-gfm)
+(require 'ox-gfm)                       ; Support export to GitHub
+					; Flavored Markdown
 ```
 
-### Install packages<a id="sec-1-4-2"></a>
+### magit<a id="sec-1-4-2"></a>
+
+```lisp
+(my/package-install 'magit)
+```
+
+### Install packages<a id="sec-1-4-3"></a>
 
 ```lisp
 (defvar my-packages '())
 ```
 
-#### better-defaults<a id="sec-1-4-2-1"></a>
+#### better-defaults<a id="sec-1-4-3-1"></a>
 
 > &#x2026; this package focuses a few changes that have near-universal appeal, lovingly hand-selected by inhabitants of the #emacs channel on Freenode.
 
@@ -94,7 +102,7 @@ directory as the original.
 (add-to-list 'my-packages 'better-defaults)
 ```
 
-#### Clojure modes and tools<a id="sec-1-4-2-2"></a>
+#### Clojure modes and tools<a id="sec-1-4-3-2"></a>
 
 1.  TODO Add clojure-mode, clojure-test-mode, and cider keystrokes to Anki
 
@@ -105,4 +113,4 @@ directory as the original.
     (add-to-list 'my-packages 'clj-refactor t)
     ```
 
-#### General lisp editing<a id="sec-1-4-2-3"></a>
+#### General lisp editing<a id="sec-1-4-3-3"></a>
