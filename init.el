@@ -2,16 +2,26 @@
 ;; Add any load-path customizations here if needed.
 ;; For example: (add-to-list 'load-path "~/.emacs.d/forks/org-mode/lisp")
 (package-initialize t)
+
+;; org must be updated before starting any org-mode related functionality
+(require 'package)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+
+(defvar org-mode-packages '(org
+			    org-plus-contrib))
+
+(when (not package-archive-contents)
+   (package-refresh-contents))
+
+(dolist (p org-mode-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
+
 (require 'org)
+
 (require 'ob-tangle)
 (org-babel-load-file (expand-file-name "~/.emacs.d/mattdean.org"))
 
-;; (require 'package)
-;; (add-to-list 'package-archives
-;; 	     '("marmalade" . "http://marmalade-repo.org/packages/"))
-;; (add-to-list 'package-archives
-;;              '("melpa" . "http://melpa.milkbox.net/packages/") t)
-;; (package-initialize)
 
 ;; (defvar my-packages '(better-defaults
 ;; 		      clojure-mode
