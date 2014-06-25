@@ -9,7 +9,14 @@
 ** TODO tramp (for connecting to remote machines)
 ** TODO shell-mode
 ** TODO org-mode
+
+[[http://orgmode.org/org.html][Full manual (html)]]
+[[http://doc.norang.ca/org-mode.html][Tutorial]]
+
 ** TODO projectile
+
+[[https://github.com/bbatsov/projectile][repo]]
+[[https://github.com/bbatsov/projectile#interactive-commands][keyboard shortcuts]]
 
 *** TODO Add keystrokes to Anki
 

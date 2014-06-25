@@ -40,7 +40,9 @@
 
 (load-theme 'solarized-dark t)
 
-(setq next-line-add-newlines 0)
+(setq next-line-add-newlines nil)
+
+(setq ns-right-option-modifier 'super)
 
 (define-key global-map (kbd "RET") 'newline-and-indent)
 
@@ -114,5 +116,27 @@
 
 (require 'org)
 (define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-cc" 'org-capture)
 (define-key global-map "\C-ca" 'org-agenda)
+(define-key global-map "\C-cb" 'org-iswitchb)
 (setq org-log-done t)
+
+(setq org-hide-leading-stars t)
+
+;; automatically clean up bad whitespace
+(setq whitespace-action '(auto-cleanup))
+
+;; only show bad whitespace
+(setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
+
+(add-hook 'coffee-mode-hook 'whitespace-mode)
+
+;; This is particularly important when watching files via grunt --
+;; don't want autosave file to trigger the watchers.
+(setq backup-directory-alist
+          `((".*" . ,temporary-file-directory)))
+
+(setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t)))
+
+(setq create-lockfiles nil)
