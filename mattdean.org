@@ -1,5 +1,6 @@
 #+TITLE: Matt Dean's Emacs configuration
 #+OPTIONS: toc:4 h:4
+#+STARTUP: content
 
 Note: Due to some unknown (to me) issue, org-mode needs to be reloaded
 via =M-x org-reload= after starting Emacs
@@ -49,6 +50,14 @@ We don't need no stinkin' startup message
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t
         inhibit-startup-echo-area-message t)
+#+END_SRC
+
+Make sure our exec-path is set up correctly
+
+#+BEGIN_SRC emacs-lisp
+  (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
+  (setq exec-path (append exec-path '("/usr/local/bin")))
+
 #+END_SRC
 
 *** Themes
@@ -123,10 +132,11 @@ unnecessarily when these files are created or updated.
  * [ ] [[http://orgmode.org/org.html#MobileOrg][Appendix B: MobileOrg]]
 
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
-  (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
+  ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
+  ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
     
-  (require 'ox-gfm)                       ; Support export to GitHub Flavored Markdown
+  ;; Support export to GitHub Flavored Markdown
+  ;; (require 'ox-gfm)
 
   (require 'org)
   (define-key global-map "\C-cl" 'org-store-link)
@@ -135,8 +145,21 @@ unnecessarily when these files are created or updated.
   (define-key global-map "\C-cb" 'org-iswitchb)
   (setq org-log-done t)
 
-  (setq org-hide-leading-stars t)
+  (setq org-hide-leading-stars nil) ; Going back and forth on this one
+
+  (setq org-default-notes-file (concat org-directory "/work.org"))
+  (define-key global-map "\C-cc" 'org-capture)
 #+END_SRC
+
+**** Possible changes
+
+#+BEGIN_QUOTE
+Sometimes you may inadvertently edit an invisible part of the buffer
+and be confused on what has been edited and how to undo the
+mistake. Setting =org-catch-invisible-edits= to non-nil will help
+prevent this. See the docstring of this option on how Org should catch
+invisible edits and process them.
+#+END_QUOTE
 
 *** magit
 
@@ -158,15 +181,20 @@ unnecessarily when these files are created or updated.
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 #+END_SRC
 
+**** TODO Improve Anki cards related to items such as forward-list.
+
+Perhaps add ascii graphics indicating the cursor position before and
+after the keystrokes.
+
 *** Clojure
     
 ***** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
 
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'clojure-mode)
-  (my/package-install 'clojure-test-mode)
   (my/package-install 'cider)
   (my/package-install 'clj-refactor)
+  (my/package-install 'midje-mode)
 
   (add-hook 'cider-repl-mode-hook 'paredit-mode)
   (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
@@ -180,6 +208,9 @@ unnecessarily when these files are created or updated.
   (add-hook 'clojure-mode-hook (lambda ()
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-m")))
+
+  (require 'midje-mode)
+  (add-hook 'clojure-mode-hook 'midje-mode)
 #+END_SRC
 
 *** Coffeescript

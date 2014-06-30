@@ -1,0 +1,17 @@
+exit
+lein new midje quux
+lein repl
+cd quux/
+lein repll
+lein repl
+exit
+git submodule deinit orgmode
+ls -la
+cat .gitmodules 
+git submodule deinit org-mode
+git submodule deinit submodules/org-mode
+g
+git status
+git rm submodules/org-mode
+git status
+exit
