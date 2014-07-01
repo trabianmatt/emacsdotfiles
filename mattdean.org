@@ -79,9 +79,82 @@ Make sure our exec-path is set up correctly
 [[https://github.com/technomancy/better-defaults][GitHub Repo]]
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'better-defaults)
+  ;; (my/package-install 'better-defaults)
+
+  (menu-bar-mode -1)
+  (when (fboundp 'tool-bar-mode)
+    (tool-bar-mode -1))
+
+  (when (fboundp 'scroll-bar-mode)
+    (scroll-bar-mode -1))
+
+  (require 'uniquify)
+  (setq uniquify-buffer-name-style 'forward)
+
+  (require 'saveplace)
+  (setq-default save-place t)
+
+  (global-set-key (kbd "M-/") 'hippie-expand)
+  (global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+
+  (global-set-key (kbd "C-s") 'isearch-forward-regexp)
+  (global-set-key (kbd "C-r") 'isearch-backward-regexp)
+  (global-set-key (kbd "C-M-s") 'isearch-forward)
+  (global-set-key (kbd "C-M-r") 'isearch-backward)
+
+  (show-paren-mode 1)
+  (setq-default indent-tabs-mode nil)
+  (setq x-select-enable-clipboard t
+        x-select-enable-primary t
+        save-interprogram-paste-before-kill t
+        apropos-do-all t
+        mouse-yank-at-point t
+        save-place-file (concat user-emacs-directory "places")
+        backup-directory-alist `(("." . ,(concat user-emacs-directory
+                                                 "backups"))))
 #+END_SRC
 
+**** Helm
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'helm)
+
+  (helm-mode 1)
+
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  (global-set-key (kbd "C-x h") 'helm-mini)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  (global-set-key (kbd "C-c <SPC>") 'helm-all-mark-rings)
+  (global-set-key (kbd "C-h C-f") 'helm-apropos)
+
+  (setq helm-quick-update t
+        helm-boring-file-regexp-list
+        '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$")
+        helm-exit-idle-delay 0.01) ; The default is 0.3, meaning you can't select an item until after 0.3 seconds has passed.
+
+  (add-hook 'eshell-mode-hook
+            #'(lambda ()
+                (define-key eshell-mode-map [remap pcomplete] 'helm-esh-pcomplete)
+                (local-set-key (kbd "M-r") 'helm-eshell-history)))
+
+#+END_SRC
+
+[[https://github.com/emacs-helm/helm][GitHub repo]]
+[[https://github.com/emacs-helm/helm/wiki][Wiki]]
+[[http://emacs-helm.github.io/helm/][Site]]
+
+Example uses:
+
+  * http://blog.jenkster.com/2013/10/finding-files-in-emacs-helm.html
+  * http://blog.jenkster.com/2013/10/a-tip-for-navigating-clojure-files-in-emacs.html
+  * http://blog.jenkster.com/2013/10/writing-a-spotify-client-in-16-minutes.html
+
+**** Silver Searcher
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'ag)
+#+END_SRC
 *** Keyboard customizations
 
 #+BEGIN_SRC emacs-lisp
@@ -112,25 +185,6 @@ unnecessarily when these files are created or updated.
 
 *** org-mode
 
-**** TODO Read [[http://orgmode.org/org.html][org-mode manual]] and add keystrokes to Anki (I suspect this will be a long-lived TODO)
-
- * [ ] [[http://orgmode.org/org.html#Document-Structure][Document Structure]]
- * [ ] [[http://orgmode.org/org.html#Tables][Tables]]
- * [ ] [[http://orgmode.org/org.html#Hyperlinks][Hyperlinks]]
- * [ ] [[http://orgmode.org/org.html#TODO-Items][TODO Items]]
- * [ ] [[http://orgmode.org/org.html#Tags][Tags]]
- * [ ] [[http://orgmode.org/org.html#Properties-and-Columns][Properties and Columns]]
- * [ ] [[http://orgmode.org/org.html#Dates-and-Times][Dates and Times]]
- * [ ] [[http://orgmode.org/org.html#Capture-_002d-Refile-_002d-Archive][Capture - Refile - Archive]]
- * [ ] [[http://orgmode.org/org.html#Agenda-Views][Agenda Views]]
- * [ ] [[http://orgmode.org/org.html#Markup][Markup for rich export]]
- * [ ] [[http://orgmode.org/org.html#Exporting][Exporting]]
- * [ ] [[http://orgmode.org/org.html#Publishing][Publishing]]
- * [ ] [[http://orgmode.org/org.html#Working-With-Source-Code][Working with source code]]
- * [ ] [[http://orgmode.org/org.html#Miscellaneous][Miscellaneous]]
- * [ ] [[http://orgmode.org/org.html#Hacking][Appendix A: Hacking]]
- * [ ] [[http://orgmode.org/org.html#MobileOrg][Appendix B: MobileOrg]]
-
 #+BEGIN_SRC emacs-lisp
   ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
   ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
@@ -143,30 +197,64 @@ unnecessarily when these files are created or updated.
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cb" 'org-iswitchb)
-  (setq org-log-done t)
+  (define-key global-map "\C-c\C-x\C-o" 'org-clock-out)
+  (define-key global-map "\C-c\C-x\C-x" 'org-clock-in-last)
+  (setq org-log-done t
+        org-enforce-todo-dependencies t
+        org-log-done 'note
+        org-log-redeadline 'note
+        org-log-reschedule 'note
+        org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)"))
+        org-log-into-drawer t
+        org-hierarchical-todo-statistics t
+        org-log-note-clock-out t
+        org-clock-idle-time 5)
+
+  (setq org-agenda-files (list "~/org/work.org"
+                               "~/org/personal.org"
+                               "~/.emacs.d/mattdean.org"))
+
+  (setq org-columns-default-format "%40ITEM(Task) %17Effort(Estimated Effort){:} %CLOCKSUM(Clock)")
 
   (setq org-hide-leading-stars nil) ; Going back and forth on this one
 
   (setq org-default-notes-file (concat org-directory "/work.org"))
   (define-key global-map "\C-cc" 'org-capture)
+
+  (setq org-modules (append org-modules '(org-habit)))
+
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/work.org" "General Tasks")
+               "* TODO %?\n  %i\n  %a")
+          ("j" "Journal" entry (file+datetree "~/org/personal.org")
+               "* %?\nEntered on %U\n  %i\n  %a")
+          ("p" "Personal Task" entry (file+headline "~/org/personal.org" "Tasks")
+               "* TODO %?\n  %i\n  %a")
+          ("c" "Log to the clocked item" item (clock)
+           "%?\n  %i\n  %a")))
+
+  (setq org-refile-targets '((nil :maxlevel . 3)
+                             (org-agenda-files :maxlevel . 3)))
+
+  (setq org-refile-use-outline-path 'file
+        org-refile-allow-creating-parent-nodes 'confirm)
+
+  (defun my/org-refile-within-current-buffer ()
+    "Move the entry at point to another heading in the current buffer."
+    (interactive)
+    (let ((org-refile-targets '((nil :maxlevel . 5))))
+      (org-refile)))
 #+END_SRC
-
-**** Possible changes
-
-#+BEGIN_QUOTE
-Sometimes you may inadvertently edit an invisible part of the buffer
-and be confused on what has been edited and how to undo the
-mistake. Setting =org-catch-invisible-edits= to non-nil will help
-prevent this. See the docstring of this option on how Org should catch
-invisible edits and process them.
-#+END_QUOTE
 
 *** magit
 
+
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'magit)
-#+END_SRC
 
+  (global-set-key (kbd "C-x g") 'magit-status)
+#+END_SRC
+    
 *** paredit and other lisp helpers
 
   * [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
@@ -179,6 +267,7 @@ invisible edits and process them.
   (my/package-install 'rainbow-delimiters)
 
   (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
 #+END_SRC
 
 **** TODO Improve Anki cards related to items such as forward-list.
@@ -230,6 +319,10 @@ after the keystrokes.
   (my/package-install 'projectile)
 
   (projectile-global-mode)
+
+  (my/package-install 'helm-projectile)
+
+  (global-set-key (kbd "C-c h") 'helm-projectile)
 #+END_SRC
 
 *** Whitespace
