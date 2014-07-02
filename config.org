@@ -6,6 +6,9 @@ Note: Due to some unknown (to me) issue, org-mode needs to be reloaded
 via =M-x org-reload= after starting Emacs
 
 * TODO Document this a bit better -- was mostly copied/pasted from existing init.el
+  :PROPERTIES:
+  :ID:       0C2E9DAA-A944-4D23-BBF1-B1B54840AB1C
+  :END:
 
 * Configuration
 ** About this configuration
@@ -208,7 +211,8 @@ unnecessarily when these files are created or updated.
         org-log-into-drawer t
         org-hierarchical-todo-statistics t
         org-log-note-clock-out t
-        org-clock-idle-time 5)
+        org-clock-idle-time 5
+        org-startup-indented t)
 
   (setq org-agenda-files (list "~/org/work.org"
                                "~/org/personal.org"
@@ -244,6 +248,11 @@ unnecessarily when these files are created or updated.
     (interactive)
     (let ((org-refile-targets '((nil :maxlevel . 5))))
       (org-refile)))
+
+  (setq org-mobile-inbox-for-pull "~/org/flagged.org")
+  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+
+
 #+END_SRC
 
 *** magit
@@ -260,6 +269,9 @@ unnecessarily when these files are created or updated.
   * [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
 
 **** TODO Add paredit keystrokes to Anki
+     :PROPERTIES:
+     :ID:       370CEEE4-BFAB-438F-8C72-70C215B4FC1A
+     :END:
 
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'paredit)
@@ -271,6 +283,9 @@ unnecessarily when these files are created or updated.
 #+END_SRC
 
 **** TODO Improve Anki cards related to items such as forward-list.
+     :PROPERTIES:
+     :ID:       DAD8B90D-44C5-47F9-BE34-9259D8463B64
+     :END:
 
 Perhaps add ascii graphics indicating the cursor position before and
 after the keystrokes.
@@ -278,6 +293,9 @@ after the keystrokes.
 *** Clojure
     
 ***** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
+      :PROPERTIES:
+      :ID:       920AA2A6-929A-48C2-B214-345D1C0C941F
+      :END:
 
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'clojure-mode)

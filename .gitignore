@@ -6,3 +6,7 @@ elpa
 /projectile.cache
 /places
 /mattdean.el
+/bookmarks
+/config.el
+/eshell/history
+/eshell/lastdir
