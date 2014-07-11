@@ -68,6 +68,12 @@ Make sure our exec-path is set up correctly
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'solarized-theme)
 
+  ;; (set-face-attribute 'default nil
+  ;;                     :family "Inconsolata" :height 130)
+
+  (set-face-attribute 'default nil
+                      :family "Menlo" :height 130)
+
   (load-theme 'solarized-dark t)
 #+END_SRC
 
@@ -146,6 +152,7 @@ Make sure our exec-path is set up correctly
 [[https://github.com/emacs-helm/helm][GitHub repo]]
 [[https://github.com/emacs-helm/helm/wiki][Wiki]]
 [[http://emacs-helm.github.io/helm/][Site]]
+[[http://tuhdo.github.io/helm-intro.html][Tutorial]]
 
 Example uses:
 
@@ -157,6 +164,31 @@ Example uses:
 
 #+BEGIN_SRC emacs-lisp
   (my/package-install 'ag)
+#+END_SRC
+
+**** Company-mode
+
+[[http://company-mode.github.io/][Website]]
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'company)
+  (my/package-install 'company-cider)
+
+  (add-hook 'after-init-hook 'global-company-mode)
+#+END_SRC
+
+**** SASS
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'sass-mode)
+  (my/package-install 'scss-mode)
+#+END_SRC
+
+**** flx
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'flx)
+  ; (my/package-install 'flx-ido)
 #+END_SRC
 *** Keyboard customizations
 
@@ -207,12 +239,16 @@ unnecessarily when these files are created or updated.
         org-log-done 'note
         org-log-redeadline 'note
         org-log-reschedule 'note
-        org-todo-keywords '((sequence "TODO(t)" "WAIT(w@/!)" "|" "DONE(d!)" "CANCELED(c@)"))
+        org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(i)" "WAIT(w@/!)" "DELEGATED(o@/!)" "|" "DONE(d!)" "CANCELED(c@)"))
         org-log-into-drawer t
         org-hierarchical-todo-statistics t
         org-log-note-clock-out t
         org-clock-idle-time 5
-        org-startup-indented t)
+        org-startup-indented t
+        org-catch-invisible-edits 'smart)
+
+  (setq org-todo-keyword-faces
+        '(("IN PROGRESS" . "green")))
 
   (add-hook 'org-mode-hook 'auto-fill-mode)
 
@@ -239,11 +275,14 @@ unnecessarily when these files are created or updated.
           ("c" "Log to the clocked item" item (clock)
            "%?\n  %i\n  %a")))
 
-  (setq org-refile-targets '((nil :maxlevel . 3)
-                             (org-agenda-files :maxlevel . 3)))
+  (setq org-refile-targets '((org-agenda-files . (:maxlevel . 6))))
 
-  (setq org-refile-use-outline-path 'file
-        org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-refile-use-outline-path nil
+        org-refile-allow-creating-parent-nodes 'confirm
+        org-refile-use-outline-path nil
+        org-refile-use-cache nil
+        org-blank-before-new-entry '((heading . auto)
+                                    (plain-list-item . auto)))
 
   (defun my/org-refile-within-current-buffer ()
     "Move the entry at point to another heading in the current buffer."
@@ -264,7 +303,12 @@ unnecessarily when these files are created or updated.
 
   (global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
-    
+
+*** gist
+
+#+BEGIN_SRC emacs-lisp
+  (my/package-install 'gist)
+#+END_SRC
 *** paredit and other lisp helpers
 
   * [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
@@ -291,9 +335,17 @@ unnecessarily when these files are created or updated.
 Perhaps add ascii graphics indicating the cursor position before and
 after the keystrokes.
 
+**** TODO Determine whether it's possible to have projectile include submodules
+:PROPERTIES:
+:ID:       8FC5EF93-CAC9-474C-A5F9-9CCA4841E958
+:END:
 *** Clojure
+
+Note: Stuart Sierra published [[https://github.com/stuartsierra/dotfiles/blob/139083393bf4e2025b15a50737971fdf423a9a23/.emacs.d/local/init.el#L313][his emacs config]] for combining org-mode,
+babel, and Clojure. May want to take a look at it if the default setup
+doesn't work as expected.
     
-***** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
+**** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
       :PROPERTIES:
       :ID:       920AA2A6-929A-48C2-B214-345D1C0C941F
       :END:

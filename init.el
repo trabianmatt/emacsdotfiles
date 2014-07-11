@@ -25,5 +25,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/dev/first_tech/mobile/first-tech.org" "~/dev/vantage/banking/ob.org" "~/org/work.org" "~/org/personal.org" "~/.emacs.d/config.org"))))
+ '(org-agenda-files (quote ("~/dev/sffcu/banking/sffcu.org" "~/dev/first_tech/mobile/first-tech.org" "~/dev/vantage/banking/ob.org" "~/org/work.org" "~/org/personal.org" "~/.emacs.d/config.org"))))
 
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
