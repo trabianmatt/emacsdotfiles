@@ -5,46 +5,12 @@
 Note: Due to some unknown (to me) issue, org-mode needs to be reloaded
 via =M-x org-reload= after starting Emacs
 
-* TODO Document this a bit better -- was mostly copied/pasted from existing init.el
-  :PROPERTIES:
-  :ID:       0C2E9DAA-A944-4D23-BBF1-B1B54840AB1C
-  :END:
-
 * Configuration
 ** About this configuration
    
    This configuration is inspired by the [[http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1][Sacha Chua's literate config
    file]] and is partially an exploration into the idea of literate
    programming, particularly via org-mode.
-
-** Emacs initialization
-
-Load common package archives.
-
-#+BEGIN_SRC emacs-lisp
-  (require 'package)
-  (setq package-archives '())             ; Start fresh
-  (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/") t)
-  
-  (when (not package-archive-contents)
-    (package-refresh-contents))
-#+END_SRC
-
-*** Helper functions
-
-The following function will install a package if needed. It is taken from [[http://dl.dropboxusercontent.com/u/3968124/sacha-emacs.html#sec-1-3-5][Sacha
-Chua's config]].
-
-#+BEGIN_SRC emacs-lisp
-  (defun my/package-install (package &optional repository)
-    "Install PACKAGE if it has not yet been installed.
-  If REPOSITORY is specified, use that."
-    (unless (package-installed-p package)
-      (let ((package-archives (if repository
-                                  (list (assoc repository package-archives))
-                                package-archives)))
-        (package-install package))))
-#+END_SRC
 
 ** General configuration
 
@@ -60,21 +26,42 @@ Make sure our exec-path is set up correctly
 #+BEGIN_SRC emacs-lisp
   (setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin"))
   (setq exec-path (append exec-path '("/usr/local/bin")))
-
 #+END_SRC
 
 *** Themes
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'solarized-theme)
+  (require 'solarized-theme)
 
+  (load-theme 'solarized-dark t)
+#+END_SRC
+
+*** Font
+
+#+BEGIN_SRC emacs-lisp
   ;; (set-face-attribute 'default nil
   ;;                     :family "Inconsolata" :height 130)
 
   (set-face-attribute 'default nil
-                      :family "Menlo" :height 130)
+                       :family "Menlo" :height 130)
 
-  (load-theme 'solarized-dark t)
+  ;; (set-face-attribute 'default nil
+  ;;                     :family "Inconsolata"
+  ;;                     :height 140
+  ;;                     :weight 'normal
+  ;;                     :width 'normal)
+
+  ;;; Fall back to DejaVu Sans for unicode.
+  (when (functionp 'set-fontset-font)
+    (set-fontset-font "fontset-default"
+                      'unicode
+                      (font-spec :family "DejaVu Sans Mono"
+                                 :width 'normal
+                                 :size 12.4
+                                 :weight 'normal)))
+
+  ;; Avoid slow "Fontifying..." on OS X
+  (setq font-lock-verbose nil)
 #+END_SRC
 
 *** Misc. packages
@@ -88,8 +75,6 @@ Make sure our exec-path is set up correctly
 [[https://github.com/technomancy/better-defaults][GitHub Repo]]
 
 #+BEGIN_SRC emacs-lisp
-  ;; (my/package-install 'better-defaults)
-
   (menu-bar-mode -1)
   (when (fboundp 'tool-bar-mode)
     (tool-bar-mode -1))
@@ -126,7 +111,7 @@ Make sure our exec-path is set up correctly
 **** Helm
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'helm)
+  (require 'helm)
 
   (helm-mode 1)
 
@@ -138,6 +123,7 @@ Make sure our exec-path is set up correctly
   (global-set-key (kbd "C-h C-f") 'helm-apropos)
 
   (setq helm-quick-update t
+        helm-buffers-fuzzy-matching t
         helm-boring-file-regexp-list
         '("\\.git$" "\\.hg$" "\\.svn$" "\\.CVS$" "\\._darcs$" "\\.la$" "\\.o$" "\\.i$")
         helm-exit-idle-delay 0.01) ; The default is 0.3, meaning you can't select an item until after 0.3 seconds has passed.
@@ -163,7 +149,7 @@ Example uses:
 **** Silver Searcher
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'ag)
+  (require 'ag)
 #+END_SRC
 
 **** Company-mode
@@ -171,25 +157,43 @@ Example uses:
 [[http://company-mode.github.io/][Website]]
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'company)
-  (my/package-install 'company-cider)
+  (require 'company)
 
   (add-hook 'after-init-hook 'global-company-mode)
+
+  (setq company-idle-delay 0.3)
+  (setq company-tooltip-limit 20)
+  (setq company-minimum-prefix-length 2)
+  (setq company-auto-complete nil)
+
+  ; Remove tramp file name handler -- otherwise any time a completion
+  ; matches a hostname in .ssh/config it will try to connect via tramp.
+  (delete-if
+   (lambda (x)
+     (or (eq (cdr x) 'tramp-completion-file-name-handler)
+         (eq (cdr x) 'tramp-file-name-handler)))
+   file-name-handler-alist)
 #+END_SRC
 
 **** SASS
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'sass-mode)
-  (my/package-install 'scss-mode)
+  (require 'sass-mode)
+  (require 'scss-mode)
 #+END_SRC
 
-**** flx
+**** ido and flx
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'flx)
-  ; (my/package-install 'flx-ido)
+  (require 'flx)
+  (require 'flx-ido)
+  (ido-mode 1)
+  (ido-everywhere 1)
+  (flx-ido-mode 1)
+  (setq ido-enable-flex-matching t)
+  (setq ido-use-faces nil)
 #+END_SRC
+
 *** Keyboard customizations
 
 #+BEGIN_SRC emacs-lisp
@@ -198,6 +202,10 @@ Example uses:
 
   ;; This is almost alway the intended behavior
   (define-key global-map (kbd "RET") 'newline-and-indent)
+
+  ;; Ignore well scrolling
+  (global-set-key [wheel-right] 'ignore)
+  (global-set-key [wheel-left] 'ignore)
 #+END_SRC
 *** Backups and intermediate files 
 
@@ -215,25 +223,138 @@ unnecessarily when these files are created or updated.
 
   (setq create-lockfiles nil)
 #+END_SRC
+*** Window management
+
+[[http://emacsredux.com/blog/2013/03/30/kill-other-buffers/#comment-847195315][Source]]
+
+#+BEGIN_QUOTE
+Since on topic of killing buffers, I also have a little snippet that
+kills the buffer in other window. Since 99% of the time my window
+layout is just two horisontally split panes, I use this all the time
+to kill help buffers or other similar "pop-ups"
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/kill-buffer-other-window ()
+    (interactive)
+    (kill-buffer
+     (window-buffer
+      (next-window))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(setq ns-pop-up-frames nil)
+#+END_SRC
+
+Support moving point from window to window using shift and arrow keys
+http://www.emacswiki.org/emacs/WindMove
+
+#+BEGIN_SRC emacs-lisp
+  (when (fboundp 'windmove-default-keybindings)
+    (windmove-default-keybindings))
+#+END_SRC
+
+*** Behavior overrides
+
+[[http://www.emacswiki.org/emacs/WholeLineOrRegion][EmacsWiki WholeLineOrRegion]]
+
+Make "cut" and "copy" act on the current line if no text is visually
+selected.
+
+#+BEGIN_SRC emacs-lisp
+  ;; (do-all-symbols (symbol)
+  ;;       (when (and (commandp symbol t)
+  ;;                  (string-match-p "-region$\\|kill-ring-save" (symbol-name symbol)))
+  ;;         (put symbol 'interactive-form
+  ;;              '(interactive
+  ;;                (if (use-region-p)
+  ;;                    (list (region-beginning) (region-end))
+  ;;                  (list (line-beginning-position) (line-beginning-position 2)))))))
+
+  (defun my-kill-ring-save (beg end flash)
+    (interactive (if (use-region-p)
+                     (list (region-beginning) (region-end) nil)
+                   (list (line-beginning-position)
+                         (line-beginning-position 2) 'flash)))
+    (kill-ring-save beg end)
+    (when flash
+      (save-excursion
+        (if (equal (current-column) 0)
+            (goto-char end)
+          (goto-char beg))
+        (sit-for blink-matching-delay))))
+
+  (global-set-key [remap kill-ring-save] 'my-kill-ring-save)
+#+END_SRC
+*** To organize
+
+#+BEGIN_SRC emacs-lisp
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Create temporary buffer
+
+  (defun temp-buffer ()
+    (interactive)
+    (switch-to-buffer "*temp*"))
+
+  (global-set-key (kbd "C-c o t") 'temp-buffer)
+
+  ;; from http://emacswiki.org/emacs/TransposeWindows
+  (defun rotate-windows ()
+    "Rotate your windows"
+    (interactive)
+    (cond
+     ((not (> (count-windows) 1))
+      (message "You can't rotate a single window!"))
+     (t
+      (let ((i 1)
+            (num-windows (count-windows)))
+        (while  (< i num-windows)
+          (let* ((w1 (elt (window-list) i))
+                 (w2 (elt (window-list) (+ (% i num-windows) 1)))
+                 (b1 (window-buffer w1))
+                 (b2 (window-buffer w2))
+                 (s1 (window-start w1))
+                 (s2 (window-start w2)))
+            (set-window-buffer w1 b2)
+            (set-window-buffer w2 b1)
+            (set-window-start w1 s2)
+            (set-window-start w2 s1)
+            (setq i (1+ i))))))))
+
+  (global-set-key (kbd "s-}") 'other-window)
+  (global-set-key (kbd "s-{") (lambda () (interactive) (other-window -1)))
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Text scaling (zoom)
+
+  (defun text-scale-reset ()
+    "Disables text scaling (zoom)"
+    (interactive)
+    (text-scale-set 0))
+
+  (global-set-key (kbd "s-=") 'text-scale-increase)
+  (global-set-key (kbd "s--") 'text-scale-decrease)
+  (global-set-key (kbd "s-0") 'text-scale-reset)
+  (global-set-key (kbd "s-+") 'text-scale-increase)
+  (global-set-key (kbd "s-_") 'text-scale-decrease)
+  (global-set-key (kbd "s-)") 'text-scale-reset)
+#+END_SRC
 
 ** Mode/package-specific configuration
 
 *** org-mode
 
 #+BEGIN_SRC emacs-lisp
-  ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/lisp")
-  ;; (add-to-list 'load-path "~/.emacs.d/submodules/org-mode/contrib/lisp")
-    
-  ;; Support export to GitHub Flavored Markdown
-  ;; (require 'ox-gfm)
-
   (require 'org)
+
   (define-key global-map "\C-cl" 'org-store-link)
   (define-key global-map "\C-cc" 'org-capture)
   (define-key global-map "\C-ca" 'org-agenda)
   (define-key global-map "\C-cb" 'org-iswitchb)
   (define-key global-map "\C-c\C-x\C-o" 'org-clock-out)
   (define-key global-map "\C-c\C-x\C-x" 'org-clock-in-last)
+  (define-key global-map "\C-c\C-x\C-j" 'org-clock-goto)
+
   (setq org-log-done t
         org-enforce-todo-dependencies t
         org-log-done 'note
@@ -242,10 +363,12 @@ unnecessarily when these files are created or updated.
         org-todo-keywords '((sequence "TODO(t)" "IN PROGRESS(i)" "WAIT(w@/!)" "DELEGATED(o@/!)" "|" "DONE(d!)" "CANCELED(c@)"))
         org-log-into-drawer t
         org-hierarchical-todo-statistics t
-        org-log-note-clock-out t
-        org-clock-idle-time 5
+
         org-startup-indented t
         org-catch-invisible-edits 'smart)
+
+  (setq org-global-properties
+                '(("Effort_ALL". "0 0:15 0:30 1:00 2:00 3:00 4:00")))
 
   (setq org-todo-keyword-faces
         '(("IN PROGRESS" . "green")))
@@ -293,13 +416,32 @@ unnecessarily when these files are created or updated.
   (setq org-mobile-inbox-for-pull "~/org/flagged.org")
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 
+  ;; windmove compatibility
+  (add-hook 'org-shiftup-final-hook 'windmove-up)
+  (add-hook 'org-shiftleft-final-hook 'windmove-left)
+  (add-hook 'org-shiftdown-final-hook 'windmove-down)
+  (add-hook 'org-shiftright-final-hook 'windmove-right)
+#+END_SRC
+
+**** Clocking
+
+#+BEGIN_SRC emacs-lisp
+  (setq org-clock-persist 'history
+        org-log-note-clock-out t
+        org-clock-in-resume t
+        org-clock-persist-query-resume t
+        org-clock-frame-title-format (append '((t org-mode-line-string)) '(" ") frame-title-format)
+        org-clock-idle-time 5
+        org-clock-clocked-in-display 'both)
+
+  (org-clock-persistence-insinuate)
 #+END_SRC
 
 *** magit
 
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'magit)
+  (require 'magit)
 
   (global-set-key (kbd "C-x g") 'magit-status)
 #+END_SRC
@@ -307,27 +449,70 @@ unnecessarily when these files are created or updated.
 *** gist
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'gist)
+  (require 'gist)
 #+END_SRC
 *** paredit and other lisp helpers
 
-  * [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
+#+BEGIN_SRC emacs-lisp
+  (require 'paredit)
 
-**** TODO Add paredit keystrokes to Anki
+  (require 'rainbow-delimiters)
+  (require 'rainbow-identifiers)
+
+  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'prog-mode-hook 'rainbow-identifiers-mode)
+
+  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
+
+  (require 'paxedit)
+
+  (add-hook 'emacs-lisp-mode-hook 'paxedit-mode)
+  (add-hook 'clojure-mode-hook 'paxedit-mode)
+
+  (eval-after-load "paxedit"
+    '(progn (define-key paxedit-mode-map (kbd "M-<right>") 'paxedit-transpose-forward)
+            (define-key paxedit-mode-map (kbd "M-<left>") 'paxedit-transpose-backward)
+            (define-key paxedit-mode-map (kbd "M-<up>") 'paxedit-backward-up)
+            (define-key paxedit-mode-map (kbd "M-<down>") 'paxedit-backward-end)
+            (define-key paxedit-mode-map (kbd "M-u") 'paxedit-symbol-change-case)
+            (define-key paxedit-mode-map (kbd "M-f") 'paxedit-next-symbol)
+            (define-key paxedit-mode-map (kbd "M-b") 'paxedit-previous-symbol)
+            (define-key paxedit-mode-map (kbd "C-*") 'paxedit-delete)
+            (define-key paxedit-mode-map (kbd "C-&") 'paxedit-kill)
+            (define-key paxedit-mode-map (kbd "C-^") 'paxedit-sexp-raise)))
+
+  (require 'mic-paren)
+
+  (paren-activate)
+
+  ; Check out
+  ; https://github.com/overtone/emacs-live/blob/master/packs/stable/clojure-pack/config/highlight-flash-conf.el
+  ; for more eval-sexp-fu possibilities
+  (require 'eval-sexp-fu)
+
+  (setq eval-sexp-fu-flash-duration)
+
+  (add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'lisp-interaction-mode-hook 'turn-on-eldoc-mode)
+  (add-hook 'ielm-mode-hook 'turn-on-eldoc-mode)
+#+END_SRC
+
+  [[http://mumble.net/~campbell/emacs/paredit.html][Paredit Keystrokes]]
+
+**** DONE Add paredit keystrokes to Anki
+CLOSED: [2014-07-11 Fri 10:11]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2014-07-11 Fri 10:11]
+:END:
      :PROPERTIES:
      :ID:       370CEEE4-BFAB-438F-8C72-70C215B4FC1A
      :END:
 
-#+BEGIN_SRC emacs-lisp
-  (my/package-install 'paredit)
-
-  (my/package-install 'rainbow-delimiters)
-
-  (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-  (add-hook 'emacs-lisp-mode-hook 'paredit-mode)
-#+END_SRC
-
-**** TODO Improve Anki cards related to items such as forward-list.
+**** DONE Improve Anki cards related to items such as forward-list.
+CLOSED: [2014-07-11 Fri 10:11]
+:LOGBOOK:
+- State "DONE"       from "TODO"       [2014-07-11 Fri 10:11]
+:END:
      :PROPERTIES:
      :ID:       DAD8B90D-44C5-47F9-BE34-9259D8463B64
      :END:
@@ -344,23 +529,133 @@ after the keystrokes.
 Note: Stuart Sierra published [[https://github.com/stuartsierra/dotfiles/blob/139083393bf4e2025b15a50737971fdf423a9a23/.emacs.d/local/init.el#L313][his emacs config]] for combining org-mode,
 babel, and Clojure. May want to take a look at it if the default setup
 doesn't work as expected.
-    
-**** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
-      :PROPERTIES:
-      :ID:       920AA2A6-929A-48C2-B214-345D1C0C941F
-      :END:
+
+**** General Clojure config
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'clojure-mode)
-  (my/package-install 'cider)
-  (my/package-install 'clj-refactor)
-  (my/package-install 'midje-mode)
-
-  (add-hook 'cider-repl-mode-hook 'paredit-mode)
-  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+  (require 'clojure-mode)
 
   (add-hook 'clojure-mode-hook 'paredit-mode)
 
+  (define-clojure-indent
+    (defroutes 'defun)
+    (GET 2)
+    (POST 2)
+    (PUT 2)
+    (DELETE 2)
+    (HEAD 2)
+    (ANY 2)
+    (context 2)
+    (for-all 'defun)
+    (describe 'defun)
+    (testing 'defun)
+    (given 'defun)
+    (using 'defun)
+    (with 'defun)
+    (it 'defun)
+    (do-it 'defun)
+    (go-loop 'defun))
+
+#+END_SRC
+
+**** Cider
+
+#+BEGIN_SRC emacs-lisp
+  (require 'cider)
+
+  (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+
+  (add-hook 'cider-repl-mode-hook 'paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'cider-repl-mode-hook 'cider-turn-on-eldoc-mode)
+
+  (setq nrepl-hide-special-buffers t)
+
+  (setq cider-show-error-buffer t)
+
+  (setq cider-auto-select-error-buffer nil)
+
+  (add-to-list 'same-window-buffer-names "*cider*")
+
+  ;;; https://github.com/stuartsierra/dotfiles/blob/master/.emacs.d/local/init.el
+
+  (defun cider-execute-in-current-repl (expr)
+    (with-current-buffer (cider-current-repl-buffer)
+      (goto-char (point-max))
+      (insert expr)
+      (cider-repl-return)))
+
+  (defun cider-refresh ()
+    (interactive)
+    (save-some-buffers t 'clj-file-p)
+    (cider-execute-in-current-repl
+     "(clojure.tools.namespace.repl/refresh)"))
+
+  (defun cider-reset ()
+    (interactive)
+    (save-some-buffers t 'clj-file-p)
+    (cider-execute-in-current-repl
+     "(user/reset)"))
+
+  (defun cider-eval-register-in-repl (register)
+    (interactive "cEval register in CIDER REPL: ")
+    (cider-execute-in-current-repl (get-register register)))
+
+  (defun cider-eval-expression-at-point-in-repl ()
+    (interactive)
+    (let ((form (cider-defun-at-point)))
+      ;; Strip excess whitespace
+      (while (string-match "\\`\s+\\|\n+\\'" form)
+        (setq form (replace-match "" t t form)))
+      (cider-execute-in-current-repl form)))
+
+  (defun cider-run-tests ()
+    (interactive)
+    (cider-execute-in-current-repl
+     (or (get-register ?t) "(clojure.test/run-tests)")))
+
+  (defun cider-clear-repl-buffer ()
+    (interactive)
+    (if (not (get-buffer (cider-current-connection-buffer)))
+        (message "No active cider connection.")
+      (progn
+        (set-buffer (cider-find-or-create-repl-buffer))
+        (cider-clear-buffer))))
+
+  (global-set-key (kbd "s-t") 'cider-run-tests)
+  (global-set-key (kbd "s-1") '(lambda () (interactive) (cider-eval-register-in-repl ?1)))
+  (global-set-key (kbd "s-2") '(lambda () (interactive) (cider-eval-register-in-repl ?2)))
+  (global-set-key (kbd "s-3") '(lambda () (interactive) (cider-eval-register-in-repl ?3)))
+  (global-set-key (kbd "s-4") '(lambda () (interactive) (cider-eval-register-in-repl ?4)))
+  (global-set-key (kbd "s-5") '(lambda () (interactive) (cider-eval-register-in-repl ?5)))
+  (global-set-key (kbd "s-r") 'cider-refresh)
+  (global-set-key (kbd "s-R") 'cider-reset)
+
+  ;; C-c C-x is reserved for org-mode
+  (eval-after-load "cider-mode"
+    '(define-key cider-mode-map (kbd "C-c C-x") nil))
+
+  ;; Specify the print length to be 100 to stop infinite sequences killing
+  ;; things. This might be dangerous for some people relying on
+  ;; *print-length* being larger. Consider a work around
+  (defun live-nrepl-set-print-length ()
+    (nrepl-send-string-sync "(set! *print-length* 100)" "clojure.core"))
+
+  (add-hook 'nrepl-connected-hook 'live-nrepl-set-print-length)
+
+#+END_SRC
+
+**** Midje
+
+#+BEGIN_SRC emacs-lisp
+  (require 'midje-mode)
+
+  (add-hook 'clojure-mode-hook 'midje-mode)
+#+END_SRC
+
+**** clj-refactor
+
+#+BEGIN_SRC emacs-lisp
   (require 'clj-refactor)
 
   (setq cljr-sort-comparator 'cljr-semantic-comparator)
@@ -368,15 +663,17 @@ doesn't work as expected.
   (add-hook 'clojure-mode-hook (lambda ()
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-m")))
-
-  (require 'midje-mode)
-  (add-hook 'clojure-mode-hook 'midje-mode)
 #+END_SRC
+
+**** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
+      :PROPERTIES:
+      :ID:       920AA2A6-929A-48C2-B214-345D1C0C941F
+      :END:
 
 *** Coffeescript
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'coffee-mode)
+  (require 'coffee-mode)
 
   (setq coffee-tab-width 2)
   (setq coffee-args-compile '("-c" "--bare"))
@@ -384,16 +681,35 @@ doesn't work as expected.
   (add-hook 'coffee-mode-hook 'whitespace-mode)
 #+END_SRC
 
+*** JavaScript
+
+#+BEGIN_SRC emacs-lisp
+  (setq js-indent-level 2)
+  (setq js2-basic-offset 2)
+
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+#+END_SRC
 *** Projectile
 
 #+BEGIN_SRC emacs-lisp
-  (my/package-install 'projectile)
+  (require 'projectile)
 
   (projectile-global-mode)
 
-  (my/package-install 'helm-projectile)
+  (require 'helm-projectile)
 
   (global-set-key (kbd "C-c h") 'helm-projectile)
+
+  ; Consider turning on caching if the command gets too slow. Perhaps my
+  ; flash drive will prevent it from being an issue?  (setq
+  ; projectile-enable-caching t)
+#+END_SRC
+*** Neotree
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c d") 'neotree-toggle)
+
+  (setq projectile-switch-project-action 'neotree-projectile-action)
 #+END_SRC
 
 *** Whitespace
@@ -402,4 +718,164 @@ doesn't work as expected.
   (setq whitespace-action '(auto-cleanup))
 
   (setq whitespace-style '(trailing space-before-tab indentation empty space-after-tab))
+#+END_SRC
+
+*** Geiser
+
+#+BEGIN_SRC emacs-lisp
+  (setq geiser-default-implementation 'racket)
+#+END_SRC
+
+*** mu4e
+
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+
+  (require 'mu4e)
+
+  (global-set-key (kbd "C-x m") 'mu4e)
+
+  (setq mu4e-drafts-folder "/[Gmail].Drafts")
+  (setq mu4e-sent-folder "/[Gmail].Sent Mail")
+  (setq mu4e-trash-folder "/[Gmail].Trash")
+  (setq mu4e-refile-folder "/[Gmail].All Mail")
+
+  (setq mu4e-headers-fields '((:date . 20)
+                              (:flags . 5)
+                              (:from-or-to . 25)
+                              (:subject . nil))
+        mu4e-bookmarks '(("flag:unread AND NOT flag:trashed" "Unread messages"  ?u)
+                         ("flag:flagged"                     "Flagged messages" ?f)
+                         ("date:today..now"                  "Today's messages" ?t)
+                         ("date:7d..now"                     "Last 7 days"      ?w))
+        mu4e-headers-seen-mark '("S" . "☑")
+        mu4e-headers-new-mark '("N" .  "✉")
+        mu4e-headers-replied-mark '("R" . "↵")
+        mu4e-headers-passed-mark '("P" . "⇉")
+        mu4e-headers-encrypted-mark '("x" . "⚷")
+        mu4e-headers-signed-mark '("s" . "✍")
+        mu4e-headers-empty-parent-prefix '("-" . "◆")
+        mu4e-headers-first-child-prefix '("\\" . "▶")
+        mu4e-use-fancy-chars nil
+        mu4e-confirm-quit nil
+        mu4e-headers-skip-duplicates t
+        mu4e-attachment-dir "~/Downloads")
+
+  ;; See https://github.com/djcb/mu/issues/380 to support
+  ;; mu4e-headers-include-related on OS X 10.9
+
+  (setq mu4e-headers-include-related nil)
+
+  (setq mu4e-maildir-shortcuts
+        '( ("/INBOX" . ?i)
+           ("/[Gmail].Sent Mail" . ?s)
+           ("/[Gmail].Trash" . ?t)
+           ("/[Gmail].All Mail" . ?a)))
+
+  ;; Allow for updating mail using 'U' in the main view:
+  (setq mu4e-get-mail-command "offlineimap")
+
+  (setq mu4e-use-fancy-chars nil)
+
+  ;; (setq mu4e-html2text-command "html2text -utf8 -nobs -width 72")
+  (setq mu4e-html2text-command "w3m -T text/html")
+
+  ;; don't save message to Sent Messages, IMAP takes care of this
+  (setq mu4e-sent-messages-behavior 'delete)
+
+  (add-hook 'mu4e-compose-mode-hook
+            (defun my-do-compose-stuff ()
+              "My settings for message composition."
+              (flyspell-mode)))
+
+  ;; enable inline images
+  (setq mu4e-view-show-images t)
+  ;; use imagemagick, if available
+  (when (fboundp 'imagemagick-register-types)
+     (imagemagick-register-types))
+
+  (setq
+   user-mail-address "matt@trabian.com"
+   user-full-name "Matt Dean"
+   mu4e-compose-signature
+   (concat
+    "Matt Dean\n"
+    "President and CEO\n"
+    "Trabian\n"
+    "www.trabian.com\n\n"
+    "877 603-8011 x701"))
+
+  ;; Sending mail
+  (require 'smtpmail)
+
+  (setq message-send-mail-function 'smtpmail-send-it
+        starttls-use-gnutls t
+        smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+        smtpmail-auth-credentials (expand-file-name "~/.authinfo")
+        smtpmail-default-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-server "smtp.gmail.com"
+        smtpmail-smtp-service 587
+        smtpmail-debug-info t)
+
+  (setq message-kill-buffer-on-exit t)
+
+  (setq mail-user-agent 'mu4e-user-agent)
+
+  (require 'org-mu4e)
+
+  ;;; message view action from EmacsWiki
+  (defun mu4e-msgv-action-view-in-browser (msg)
+    "View the body of the message in a web browser."
+    (interactive)
+    (let ((html (mu4e-msg-field (mu4e-message-at-point t) :body-html))
+          (tmpfile (format "%s/%d.html" temporary-file-directory (random))))
+      (unless html (error "No html part for this message"))
+      (with-temp-file tmpfile
+        (insert
+         "<html>"
+         "<head><meta http-equiv=\"content-type\""
+         "content=\"text/html;charset=UTF-8\">"
+         html))
+      (browse-url (concat "file://" tmpfile))))
+
+  (add-to-list 'mu4e-view-actions
+               '("View in browser" . mu4e-msgv-action-view-in-browser) t)
+#+END_SRC
+
+*** Smart Mode Line
+
+#+BEGIN_SRC emacs-lisp
+  (sml/setup)
+
+  (sml/apply-theme 'automatic)
+
+  (setq-default
+     mode-line-format 
+     '("%e"
+       mode-line-front-space
+       mode-line-mule-info
+       mode-line-client
+       mode-line-modified
+       mode-line-remote
+       mode-line-frame-identification
+       mode-line-buffer-identification
+       "   "
+       mode-line-position
+       (vc-mode vc-mode)
+       "  "
+       mode-line-modes
+       mode-line-misc-info
+       mode-line-end-spaces))
+#+END_SRC
+
+*** Diminish
+
+#+BEGIN_SRC emacs-lisp
+
+#+END_SRC
+
+*** Markdown
+
+#+BEGIN_SRC emacs-lisp
+(setq markdown-open-command "/usr/local/bin/mark")
 #+END_SRC

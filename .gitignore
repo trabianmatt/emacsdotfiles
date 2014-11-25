@@ -1,7 +1,15 @@
 *~
+\#*\#
+.\#*
+*.elc
+auto-save-list
+tramp
 backups
 auto-save/list
 elpa
+.cask/
+.org-id-locations
+*_archive
 /projectile-bookmarks.eld
 /projectile.cache
 /places
@@ -10,3 +18,8 @@ elpa
 /config.el
 /eshell/history
 /eshell/lastdir
+/org-clock-save.el
+/url
+/var
+/.smex-items
+/.org-id-locations
