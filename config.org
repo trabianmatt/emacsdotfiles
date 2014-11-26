@@ -166,13 +166,9 @@ Example uses:
   (setq company-minimum-prefix-length 2)
   (setq company-auto-complete nil)
 
-  ; Remove tramp file name handler -- otherwise any time a completion
-  ; matches a hostname in .ssh/config it will try to connect via tramp.
-  (delete-if
-   (lambda (x)
-     (or (eq (cdr x) 'tramp-completion-file-name-handler)
-         (eq (cdr x) 'tramp-file-name-handler)))
-   file-name-handler-alist)
+  (delete (rassoc 'tramp-completion-file-name-handler
+                                  file-name-handler-alist)
+                                  file-name-handler-alist)
 #+END_SRC
 
 **** SASS
@@ -193,6 +189,7 @@ Example uses:
   (setq ido-enable-flex-matching t)
   (setq ido-use-faces nil)
 #+END_SRC
+
 
 *** Keyboard customizations
 
@@ -437,6 +434,11 @@ selected.
   (org-clock-persistence-insinuate)
 #+END_SRC
 
+*** key-chord-mode
+
+#+BEGIN_SRC emacs-lisp
+(defvar key-chord-two-keys-delay 0.05)
+#+END_SRC
 *** magit
 
 
@@ -562,11 +564,13 @@ doesn't work as expected.
 
 #+BEGIN_SRC emacs-lisp
   (require 'cider)
+  (require 'cider-eval-sexp-fu "~/.emacs.d/lisp/cider-eval-sexp-fu.el")
 
   (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
 
   (add-hook 'cider-repl-mode-hook 'paredit-mode)
   (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+
   (add-hook 'cider-repl-mode-hook 'cider-turn-on-eldoc-mode)
 
   (setq nrepl-hide-special-buffers t)
@@ -651,6 +655,10 @@ doesn't work as expected.
   (require 'midje-mode)
 
   (add-hook 'clojure-mode-hook 'midje-mode)
+
+  ;; C-c h is reserved for showing helm-projectile
+  (eval-after-load "midje-mode"
+    '(define-key midje-mode-map (kbd "C-c h") nil))
 #+END_SRC
 
 **** clj-refactor
@@ -658,11 +666,22 @@ doesn't work as expected.
 #+BEGIN_SRC emacs-lisp
   (require 'clj-refactor)
 
-  (setq cljr-sort-comparator 'cljr-semantic-comparator)
+  (setq cljr-sort-comparator 'cljr--semantic-comparator)
 
   (add-hook 'clojure-mode-hook (lambda ()
                                  (clj-refactor-mode 1)
                                  (cljr-add-keybindings-with-prefix "C-c C-m")))
+
+  (setq cljr-magic-require-namespaces
+        (-concat cljr-magic-require-namespaces
+                 '(("component" . "com.stuartsierra.component")
+                   ("schema" . "schema.core")
+                   ("log" . "taoensso.timbre")))
+        cljr--magic-requires-re
+        (concat "(\\("
+                (regexp-opt (-map 'car cljr-magic-require-namespaces)) "\\)/"))
+
+  ; (key-chord-define clj-refactor-map "ar" 'cljr-add-require-to-ns)
 #+END_SRC
 
 **** TODO Add clojure-mode, clojure-test-mode, clj-refactor, and cider keystrokes to Anki
@@ -878,4 +897,45 @@ doesn't work as expected.
 
 #+BEGIN_SRC emacs-lisp
 (setq markdown-open-command "/usr/local/bin/mark")
+#+END_SRC
+
+*** YAS
+
+#+BEGIN_SRC emacs-lisp
+  (require 'yasnippet)
+
+  (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-snippets")
+  (add-to-list 'yas-snippet-dirs "~/.emacs.d/snippets")
+
+  (yas-global-mode 1)
+
+  ; Prevent conflict between company mode and yasnippet
+  (defun company-yasnippet-or-completion ()
+    (interactive)
+    (if (yas/expansion-at-point)
+        (progn
+          (company-abort)
+          (yas/expand))
+      (company-complete-common)))
+   
+  (defun yas/expansion-at-point ()
+    "Tested with v0.6.1. Extracted from `yas/expand-1'"
+    (first (yas--templates-for-key-at-point)))
+
+  (define-key company-active-map (kbd "<tab>") 'company-yasnippet-or-completion)
+#+END_SRC
+
+*** Expand-region
+
+#+BEGIN_SRC emacs-lisp
+  (require 'expand-region)
+  (global-set-key (kbd "C-=") 'er/expand-region)
+#+END_SRC
+
+*** Undo-tree
+
+#+BEGIN_SRC emacs-lisp
+  (require 'undo-tree)
+
+  (global-undo-tree-mode)
 #+END_SRC
