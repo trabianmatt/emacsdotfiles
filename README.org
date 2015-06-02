@@ -2626,24 +2626,49 @@ Seems to cause conflicts with web-mode. Disabling for now.
 ** Frame
 
 #+BEGIN_SRC emacs-lisp
-(defun my/frame-make-transparent()
-  (set-frame-parameter (selected-frame) 'alpha '(85 50)))
+;; (defun my/frame-make-transparent ()
+;;   (set-frame-parameter (selected-frame) 'alpha '(85 50)))
 
-(defun my/frame-make-opaque()
-  (set-frame-parameter (selected-frame) 'alpha '(100 100)))
+;; (defun my/frame-make-opaque ()
+;;   (set-frame-parameter (selected-frame) 'alpha '(100 100)))
 
-(defun my/frame-transparency()
-  "Toggle frame transparency"
+;; (defun my/frame-transparency ()
+;;   "Toggle frame transparency"
+;;   (interactive)
+;;   (setq trans (cdr (frame-parameter (selected-frame) 'alpha)))
+;;   (setq check (list 100))
+
+;;   (if (cl-equalp trans check)
+;;       (my/frame-make-transparent)
+;;     (my/frame-make-opaque)))
+
+(defun my/restore-frame-config ()
+  "Restore the opacity of the window"
+  (remove-hook 'pre-command-hook 'my/restore-frame-config)
+  (remove-hook 'focus-out-hook 'my/restore-frame-config)
+  (jump-to-register :save-with-transparency))
+
+(defun my/make-transparent ()
+  "Save the current frame config to a register, become
+  transparent, and add a hook to restore before the next command
+  or when the frame loses focus"
   (interactive)
-  (setq trans (cdr (frame-parameter (selected-frame) 'alpha)))
-  (setq check (list 100))
+  (frame-configuration-to-register :save-with-transparency)  
+  (set-frame-parameter (selected-frame) 'alpha '(5 100))
+  (add-hook 'pre-command-hook 'my/restore-frame-config)
+  (add-hook 'focus-out-hook 'my/restore-frame-config))
 
-  (if (cl-equalp trans check)
-      (my/frame-make-transparent)
-    (my/frame-make-opaque)))
+(defun my/save-with-transparency ()
+  "Save the current buffer and immediately become transparent.
+  Helpful for situations where you'd like to see the impact of
+  your change on another window such as a browser behind your
+  frame."
+  (interactive)
+  (save-buffer)
+  (my/make-transparent))
 
-
-
+(bind-key "s-s" 'my/save-with-transparency)
+(bind-key "s-t" 'my/make-transparent)
 
 #+END_SRC
 
