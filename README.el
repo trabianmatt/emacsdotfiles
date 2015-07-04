@@ -349,7 +349,7 @@ line instead."
 
 (use-package ace-window
   :ensure t
-  :bind (("C-c w" . ace-window)))
+  :bind (("C-x w" . ace-window)))
 
 (use-package ag
   :ensure t)
@@ -361,6 +361,21 @@ line instead."
         coffee-args-compile '("-c" "--bare"))
   :config
   (add-hook 'coffee-mode-hook 'whitespace-mode))
+
+(use-package company
+  :diminish company-mode
+  :init
+  (setq
+   company-idle-delay 0.3
+   company-tooltip-limit 20
+   company-minimum-prefix-length 2
+   company-auto-complete nil)
+  :config
+  (delete (rassoc 'tramp-completion-file-name-handler
+                  file-name-handler-alist)
+          file-name-handler-alist)
+
+  (global-company-mode 1))
 
 (use-package emmet-mode
   :diminish emmet-mode
@@ -2105,8 +2120,6 @@ Late deadlines first, then scheduled, then non-late deadlines"
   
   (add-hook 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
   
-  (bind-key "\t" 'hippie-expand yas-minor-mode-map)
-
   (add-to-list 'yas-prompt-functions 'shk-yas/helm-prompt)
   
   (defun shk-yas/helm-prompt (prompt choices &optional display-fn)
@@ -2127,7 +2140,23 @@ Late deadlines first, then scheduled, then non-late deadlines"
           (if (null result)
               (signal 'quit "user quit!")
             (cdr (assoc result rmap))))
-      nil)))
+      nil))
+  
+  ;; Prevent conflict between company mode and yasnippet
+  (defun company-yasnippet-or-completion ()
+    (interactive)
+    (if (yas/expansion-at-point)
+        (progn
+          (company-abort)
+          (yas/expand))
+      (company-complete-common)))
+   
+  (defun yas/expansion-at-point ()
+    "Tested with v0.6.1. Extracted from `yas/expand-1'"
+    (first (yas--templates-for-key-at-point)))
+  
+  ;; (bind-key "<tab>" 'hippie-expand yas-minor-mode-map)
+  (bind-key "<tab>" 'company-yasnippet-or-completion company-active-map))
 
 (use-package helm-c-yasnippet
   :ensure t)
@@ -2162,21 +2191,50 @@ Late deadlines first, then scheduled, then non-late deadlines"
         (kill-buffer buffer)
         (message "File '%s' successfully removed" filename)))))
 
-(defun my/frame-make-transparent()
-  (set-frame-parameter (selected-frame) 'alpha '(85 50)))
+;; (defun my/frame-make-transparent ()
+;;   (set-frame-parameter (selected-frame) 'alpha '(85 50)))
 
-(defun my/frame-make-opaque()
+(defun my/frame-make-opaque ()
+  (interactive)
   (set-frame-parameter (selected-frame) 'alpha '(100 100)))
 
-(defun my/frame-transparency()
-  "Toggle frame transparency"
-  (interactive)
-  (setq trans (cdr (frame-parameter (selected-frame) 'alpha)))
-  (setq check (list 100))
+;; (defun my/frame-transparency ()
+;;   "Toggle frame transparency"
+;;   (interactive)
+;;   (setq trans (cdr (frame-parameter (selected-frame) 'alpha)))
+;;   (setq check (list 100))
 
-  (if (cl-equalp trans check)
-      (my/frame-make-transparent)
-    (my/frame-make-opaque)))
+;;   (if (cl-equalp trans check)
+;;       (my/frame-make-transparent)
+;;     (my/frame-make-opaque)))
+
+(defun my/restore-frame-config ()
+  "Restore the opacity of the window"
+  (remove-hook 'pre-command-hook 'my/restore-frame-config)
+  (remove-hook 'focus-out-hook 'my/restore-frame-config)
+  (jump-to-register :save-with-transparency))
+
+(defun my/make-transparent ()
+  "Save the current frame config to a register, become
+  transparent, and add a hook to restore before the next command
+  or when the frame loses focus"
+  (interactive)
+  (frame-configuration-to-register :save-with-transparency)  
+  (set-frame-parameter (selected-frame) 'alpha '(5 100))
+  (add-hook 'pre-command-hook 'my/restore-frame-config)
+  (add-hook 'focus-out-hook 'my/restore-frame-config))
+
+(defun my/save-with-transparency ()
+  "Save the current buffer and immediately become transparent.
+  Helpful for situations where you'd like to see the impact of
+  your change on another window such as a browser behind your
+  frame."
+  (interactive)
+  (save-buffer)
+  (my/make-transparent))
+
+(bind-key "s-s" 'my/save-with-transparency)
+(bind-key "s-t" 'my/make-transparent)
 
 (defun untabify-buffer ()
   (interactive)

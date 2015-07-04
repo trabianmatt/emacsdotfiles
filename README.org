@@ -459,6 +459,24 @@ https://github.com/davorb/focus-mode.el/blob/master/foucs-mode.el
   :config
   (add-hook 'coffee-mode-hook 'whitespace-mode))
 #+END_SRC
+** Company
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :diminish company-mode
+  :init
+  (setq
+   company-idle-delay 0.3
+   company-tooltip-limit 20
+   company-minimum-prefix-length 2
+   company-auto-complete nil)
+  :config
+  (delete (rassoc 'tramp-completion-file-name-handler
+                  file-name-handler-alist)
+          file-name-handler-alist)
+
+  (global-company-mode 1))
+#+END_SRC
 ** emmet
 
 #+BEGIN_SRC emacs-lisp
@@ -2556,8 +2574,6 @@ Seems to cause conflicts with web-mode. Disabling for now.
   
   (add-hook 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
   
-  (bind-key "\t" 'hippie-expand yas-minor-mode-map)
-
   (add-to-list 'yas-prompt-functions 'shk-yas/helm-prompt)
   
   (defun shk-yas/helm-prompt (prompt choices &optional display-fn)
@@ -2578,7 +2594,23 @@ Seems to cause conflicts with web-mode. Disabling for now.
           (if (null result)
               (signal 'quit "user quit!")
             (cdr (assoc result rmap))))
-      nil)))
+      nil))
+  
+  ;; Prevent conflict between company mode and yasnippet
+  (defun company-yasnippet-or-completion ()
+    (interactive)
+    (if (yas/expansion-at-point)
+        (progn
+          (company-abort)
+          (yas/expand))
+      (company-complete-common)))
+   
+  (defun yas/expansion-at-point ()
+    "Tested with v0.6.1. Extracted from `yas/expand-1'"
+    (first (yas--templates-for-key-at-point)))
+  
+  ;; (bind-key "<tab>" 'hippie-expand yas-minor-mode-map)
+  (bind-key "<tab>" 'company-yasnippet-or-completion company-active-map))
 
 (use-package helm-c-yasnippet
   :ensure t)
@@ -2628,8 +2660,9 @@ Seems to cause conflicts with web-mode. Disabling for now.
 ;; (defun my/frame-make-transparent ()
 ;;   (set-frame-parameter (selected-frame) 'alpha '(85 50)))
 
-;; (defun my/frame-make-opaque ()
-;;   (set-frame-parameter (selected-frame) 'alpha '(100 100)))
+(defun my/frame-make-opaque ()
+  (interactive)
+  (set-frame-parameter (selected-frame) 'alpha '(100 100)))
 
 ;; (defun my/frame-transparency ()
 ;;   "Toggle frame transparency"
