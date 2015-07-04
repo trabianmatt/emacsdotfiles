@@ -564,7 +564,6 @@ line instead."
 (use-package magit
   :ensure t
   :bind (("C-x g" . magit-status))
-  :diminish magit-auto-revert-mode
   :config
   
   ;; full screen magit-status
