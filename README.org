@@ -2566,12 +2566,18 @@ Seems to cause conflicts with web-mode. Disabling for now.
         web-mode-css-indent-offset 2
         web-mode-attr-indent-offset 2
         web-mode-enable-auto-quoting nil
-        web-mode-enable-auto-pairing nil)
-  
+        web-mode-enable-auto-pairing nil
+        web-mode-void-elements nil
+        web-mode-content-types-alist
+        '(("jsx" . "\\.js[x]?\\'")))
+
   :config
 
+  (add-to-list 'auto-mode-alist '("\\.css$" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.jsx$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.eex$" . web-mode))
 
   (setq find-npm-module-binding "C-c m")
 
