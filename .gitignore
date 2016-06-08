@@ -24,3 +24,6 @@ elpa
 /.smex-items
 /.org-id-locations
 /.mc-lists.el
+/README.el
+/README.ics
+/ac-comphist.dat
