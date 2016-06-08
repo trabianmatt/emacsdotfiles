@@ -307,7 +307,7 @@
    `(web-mode-html-attr-value-face ((t (:foreground ,base0B :slant normal))))
    `(web-mode-html-attr-equal-face ((t (:foreground ,base07))))
    `(web-mode-keyword-face ((t (:foreground ,base0E))))
-   `(web-mode-variable-name-face ((t (:foreground ,base0B))))
+   `(web-mode-variable-name-face ((t (:foreground ,base0C))))
    `(web-mode-type-face ((t (:foreground ,base0A))))
    `(web-mode-html-tag-face ((t (:foreground ,base08))))
    `(web-mode-javascript-string-face ((t (:foreground ,base0B))))
