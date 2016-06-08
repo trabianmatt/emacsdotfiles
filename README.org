@@ -2613,7 +2613,13 @@ Seems to cause conflicts with web-mode. Disabling for now.
   (setq yas-expand-only-for-last-commands '(self-insert-command))
 
   (yas-global-mode 1)
-  
+
+  ;; Remove Yasnippet's default tab key binding
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  ;; Set Yasnippet's key binding to shift+tab
+  (define-key yas-minor-mode-map (kbd "<backtab>") 'yas-expand)
+
   (add-hook 'hippie-expand-try-functions-list 'yas-hippie-try-expand)
   
   (add-to-list 'yas-prompt-functions 'shk-yas/helm-prompt)
@@ -2636,23 +2642,7 @@ Seems to cause conflicts with web-mode. Disabling for now.
           (if (null result)
               (signal 'quit "user quit!")
             (cdr (assoc result rmap))))
-      nil))
-  
-  ;; Prevent conflict between company mode and yasnippet
-  (defun company-yasnippet-or-completion ()
-    (interactive)
-    (if (yas/expansion-at-point)
-        (progn
-          (company-abort)
-          (yas/expand))
-      (company-complete-common)))
-   
-  (defun yas/expansion-at-point ()
-    "Tested with v0.6.1. Extracted from `yas/expand-1'"
-    (first (yas--templates-for-key-at-point)))
-  
-  ;; (bind-key "<tab>" 'hippie-expand yas-minor-mode-map)
-  (bind-key "<tab>" 'company-yasnippet-or-completion company-active-map))
+      nil)))
 
 (use-package helm-c-yasnippet
   :ensure t)
