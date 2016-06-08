@@ -405,8 +405,8 @@ http://www.emacswiki.org/emacs/WindMove
 
 Avoid creating a new frame when trying to split window: [[file:/Applications/Emacs.app/Contents/Resources/lisp/window.el.gz::try%20to%20split%20WINDOW%20vertically%20disregarding%20any%20value%20specified][window.el]]
 #+BEGIN_SRC emacs-lisp
-(setq split-height-threshold 1
-      split-width-threshold  1)
+(setq split-height-threshold 80
+      split-width-threshold 160)
 #+END_SRC
 
 https://github.com/davorb/focus-mode.el/blob/master/foucs-mode.el
