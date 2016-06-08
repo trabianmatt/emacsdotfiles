@@ -2506,6 +2506,23 @@ Seems to cause conflicts with web-mode. Disabling for now.
 ;;   (add-hook 'web-mode-hook 'tagedit-mode)
 ;;   (tagedit-add-paredit-like-keybindings))
 #+END_SRC
+** Tern
+
+#+BEGIN_SRC emacs-lisp
+(use-package tern
+  :ensure t
+  :init
+  (progn
+    (require 'tern-auto-complete)
+    (tern-ac-setup)
+    (add-hook 'web-mode-hook (lambda () (tern-mode t)))))
+
+(defun delete-tern-process ()
+  (interactive)
+  (delete-process "Tern"))
+
+#+END_SRC
+
 ** Toggle Quotes
 
 # Doesn't seem to work. Will keep it around and try to fix later.
