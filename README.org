@@ -2720,14 +2720,13 @@ Seems to cause conflicts with web-mode. Disabling for now.
   "Restore the opacity of the window"
   (remove-hook 'pre-command-hook 'my/restore-frame-config)
   (remove-hook 'focus-out-hook 'my/restore-frame-config)
-  (jump-to-register :save-with-transparency))
+  (my/frame-make-opaque))
 
 (defun my/make-transparent ()
   "Save the current frame config to a register, become
   transparent, and add a hook to restore before the next command
   or when the frame loses focus"
   (interactive)
-  (frame-configuration-to-register :save-with-transparency)  
   (set-frame-parameter (selected-frame) 'alpha '(5 100))
   (add-hook 'pre-command-hook 'my/restore-frame-config)
   (add-hook 'focus-out-hook 'my/restore-frame-config))
