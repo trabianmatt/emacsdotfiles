@@ -390,6 +390,11 @@ to kill help buffers or other similar "pop-ups"
 (setq ns-pop-up-frames nil)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+;; Always focus the help window
+(setq help-window-select t)
+#+END_SRC
+
 Support moving point from window to window using shift and arrow keys
 http://www.emacswiki.org/emacs/WindMove
 
