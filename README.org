@@ -468,20 +468,20 @@ https://github.com/davorb/focus-mode.el/blob/master/foucs-mode.el
 ** Company
 
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :diminish company-mode
-  :init
-  (setq
-   company-idle-delay 0.3
-   company-tooltip-limit 20
-   company-minimum-prefix-length 2
-   company-auto-complete nil)
-  :config
-  (delete (rassoc 'tramp-completion-file-name-handler
-                  file-name-handler-alist)
-          file-name-handler-alist)
+;; (use-package company
+;;   :diminish company-mode
+;;   :init
+;;   (setq
+;;    company-idle-delay 0.3
+;;    company-tooltip-limit 20
+;;    company-minimum-prefix-length 2
+;;    company-auto-complete nil)
+;;   :config
+;;   (delete (rassoc 'tramp-completion-file-name-handler
+;;                   file-name-handler-alist)
+;;           file-name-handler-alist)
 
-  (global-company-mode 1))
+;;   (global-company-mode 1))
 #+END_SRC
 ** emmet
 
