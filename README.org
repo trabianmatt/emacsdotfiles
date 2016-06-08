@@ -252,7 +252,7 @@ line instead."
         (enable-theme my-dark-theme))))
 
 (set-face-attribute 'default nil
-                    :family "Menlo" :height 130)
+                   :family "Operator Mono SSm" :height 120 :weight `light)
 
 ;;; Fall back to DejaVu Sans for unicode.
 (when (functionp 'set-fontset-font)
