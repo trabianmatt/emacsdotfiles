@@ -784,7 +784,7 @@ Inspirations:
 
 ;; node.js
 (defun resolve-npm-path (name)
-  (let* ((command (format "node -e 'try { require.extensions[\".jsx\"] = function() {}; require(\"util\").print(require.resolve(\"%s\")); } catch(e) { e }'"
+  (let* ((command (format "node -e 'try { require.extensions[\".jsx\"] = function() {}; process.stdout.write(require.resolve(\"%s\")) } catch(e) { e }'"
                           name name))
          (result (shell-command-to-string command)))
     result))
