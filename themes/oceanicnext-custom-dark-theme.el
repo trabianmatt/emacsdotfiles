@@ -310,6 +310,7 @@
    `(web-mode-variable-name-face ((t (:foreground ,base0B))))
    `(web-mode-type-face ((t (:foreground ,base0A))))
    `(web-mode-html-tag-face ((t (:foreground ,base08))))
+   `(web-mode-javascript-string-face ((t (:foreground ,base0B))))
    
    ;; neodir
    `(neo-dir-link-face ((t (:foreground ,base0D :weight book))))
