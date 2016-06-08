@@ -465,7 +465,7 @@ https://github.com/davorb/focus-mode.el/blob/master/foucs-mode.el
   :ensure t
   :init
   (setq ag-highlight-search t)
-  (setq ag-reuse-window 't)
+  (setq ag-reuse-window nil)
   :config
   (add-hook 'ag-search-finished-hook (lambda () (pop-to-buffer next-error-last-buffer))))
 #+END_SRC
