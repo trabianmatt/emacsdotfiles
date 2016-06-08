@@ -146,7 +146,7 @@ when using file watchers (such as grunt) that will be triggered
 unnecessarily when these files are created or updated.
 
 #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist '((".*" . "~/.emacs.d/backups")))
+  (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
 
   (setq delete-old-versions -1)
   (setq version-control t)
