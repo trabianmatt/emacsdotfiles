@@ -613,30 +613,30 @@ Inspirations:
 - [[https://github.com/thierryvolpiatto/emacs-tv-config/blob/master/init-helm-thierry.el][Helm maintainer's helm config]]
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-swoop
-  :bind (("M-i" . helm-swoop)
-         ("M-I" . helm-swoop-back-to-last-point)
-         ("C-c M-i" . helm-multi-swoop)
-         ("C-x M-i" . helm-multi-swoop-all)) 
-  :ensure t
-  :config
-  
-  ;; Move up and down like isearch
-  (bind-key "C-r" 'helm-previous-line helm-swoop-map)
-  (bind-key "C-s" 'helm-next-line helm-swoop-map)
-  (bind-key "C-r" 'helm-previous-line helm-multi-swoop-map)
-  (bind-key "C-s" 'helm-next-line helm-multi-swoop-map))
+;; (use-package helm-swoop
+;;   :bind (("M-i" . helm-swoop)
+;;          ("M-I" . helm-swoop-back-to-last-point)
+;;          ("C-c M-i" . helm-multi-swoop)
+;;          ("C-x M-i" . helm-multi-swoop-all))
+;;   :ensure t
+;;   :config
+
+;;   ;; Move up and down like isearch
+;;   (bind-key "C-r" 'helm-previous-line helm-swoop-map)
+;;   (bind-key "C-s" 'helm-next-line helm-swoop-map)
+;;   (bind-key "C-r" 'helm-previous-line helm-multi-swoop-map)
+;;   (bind-key "C-s" 'helm-next-line helm-multi-swoop-map))
 
 (use-package helm
   :ensure t
-  :diminish helm-mode
   :init
   (require 'helm-config)
-  (setq 
+  (setq
         helm-idle-delay 0.0
         helm-quick-update t
         helm-M-x-requires-pattern nil
-        helm-ff-skip-boring-files t)
+        helm-ff-skip-boring-files t
+        helm-ff-guess-ffap-urls nil)
   (helm-mode)
   :bind (("C-c h" . helm-mini)
          ("C-h a" . helm-apropos)
@@ -650,11 +650,10 @@ Inspirations:
          ("C-x C-f" . helm-find-files)
          ("C-c <SPC>" . helm-all-mark-rings)
          ("C-x r b" . helm-filtered-bookmarks)
-         ("C-:" . helm-eval-expression-with-eldoc)
          ("C-h d" . helm-info-at-point)
          ("C-c g" . helm-google-suggest)
          ("C-h C-f" . helm-apropos))
-  :init
+  :config
 
   (bind-key "C-d" 'helm-ff-persistent-delete helm-find-files-map)
   (bind-key "C-d" 'helm-buffer-run-kill-persistent helm-buffer-map)
@@ -663,6 +662,7 @@ Inspirations:
   (bind-key "<tab>" 'helm-execute-persistent-action helm-map)
   (bind-key "C-i" 'helm-execute-persistent-action helm-map) ; Work in terminal
   (bind-key "C-z" 'helm-select-action helm-map)
+  (bind-key "C-." 'helm-find-files-up-one-level)
 
   (setq
    helm-google-suggest-use-curl-p t
