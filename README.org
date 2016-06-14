@@ -217,11 +217,15 @@ line instead."
 #+BEGIN_SRC emacs-lisp
 (setq custom-theme-directory (concat user-emacs-directory "themes/"))
 
-(setq my-dark-theme 'solarized-dark)
+(setq my-dark-theme 'oceanicnext-custom-dark)
 (setq my-light-theme 'solarized-light)
 
 ;; (setq my-dark-theme 'base16-solarized-dark)
 ;; (setq my-light-theme 'base16-solarized-light)
+
+;; This loads better defaults for areas not covered by oceanicnext (yet)
+(load-theme 'solarized-dark t t)
+(enable-theme 'solarized-dark)
 
 ;; last t is for NO-ENABLE
 (load-theme my-dark-theme t t)
@@ -839,6 +843,8 @@ Inspirations:
 
 #+END_SRC
 ** Org Mode
+
+Much of this is taken from http://doc.norang.ca/org-mode.html.
 
 | Key   | For                                   | Used       |
 |-------+---------------------------------------+------------|
@@ -2785,6 +2791,20 @@ Including indent-buffer, which should not be called automatically on save."
              (get-buffer bufname)))
     (switch-to-buffer (get-buffer-create bufname))
     (text-mode)))
+#+END_SRC
+** Large buffers
+
+Not sure this is working the way I want yet.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-find-file-check-make-large-file-read-only-hook ()
+  "If a file is over a given size, make the buffer read only."
+  (when (> (buffer-size) (* 1024 1024))
+    (setq buffer-read-only t)
+    (buffer-disable-undo)
+    (fundamental-mode)))
+
+(add-hook 'find-file-hook 'my-find-file-check-make-large-file-read-only-hook)
 #+END_SRC
 * Mac OS X
 
