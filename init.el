@@ -10,3 +10,4 @@
 (require 'ob-tangle)
 ;; (org-babel-load-file (expand-file-name "~/.emacs.d/config.org"))
 (org-babel-load-file (expand-file-name "~/.emacs.d/README.org"))
+(put 'narrow-to-region 'disabled nil)
